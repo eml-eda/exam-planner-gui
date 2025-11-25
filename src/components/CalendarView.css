@@ -1,0 +1,284 @@
+.calendar-view {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.month-section {
+    margin-bottom: 32px;
+}
+
+.month-header {
+    text-align: center;
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.day-header {
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.calendar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendar-day {
+    min-height: 120px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    position: relative;
+    transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-day:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.calendar-day.out-of-range {
+    opacity: 0.3;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.day-number {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.day-exams {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.exam-item {
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border: 1px solid transparent;
+    position: relative;
+}
+
+.exam-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+/* Exam color coding */
+.exam-item.current-course {
+    background: var(--success-green);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.exam-item.current-course:hover {
+    background: rgba(72, 187, 120, 0.9);
+    box-shadow: 0 4px 16px rgba(72, 187, 120, 0.4);
+}
+
+.exam-item.conflict-minor {
+    background: var(--warning-yellow);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.exam-item.conflict-minor:hover {
+    background: rgba(237, 137, 54, 0.9);
+    box-shadow: 0 4px 16px rgba(237, 137, 54, 0.4);
+}
+
+.exam-item.conflict-major {
+    background: var(--danger-red);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.exam-item.conflict-major:hover {
+    background: rgba(245, 101, 101, 0.9);
+    box-shadow: 0 4px 16px rgba(245, 101, 101, 0.4);
+}
+
+.exam-item.neutral {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.exam-item.neutral:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+}
+
+.exam-code {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tooltip */
+.exam-tooltip {
+    position: fixed;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--backdrop-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    pointer-events: none;
+    max-width: 280px;
+    animation: fadeIn 0.2s ease-out;
+
+    /* Position the tooltip near the cursor */
+    left: var(--mouse-x, 50%);
+    top: var(--mouse-y, 50%);
+    transform: translate(10px, -50%);
+}
+
+.tooltip-header {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.tooltip-details {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tooltip-details div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* Weekend styling (optional) */
+.calendar-day:nth-child(6),
+.calendar-day:nth-child(7) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .calendar-day {
+        min-height: 100px;
+        padding: 6px;
+    }
+
+    .day-number {
+        font-size: 13px;
+    }
+
+    .exam-item {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    .month-header {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-view {
+        overflow-x: scroll;
+        min-width: 700px;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+    }
+
+    .day-number {
+        font-size: 12px;
+    }
+
+    .exam-item {
+        padding: 3px 5px;
+        font-size: 9px;
+    }
+
+    .day-header {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+
+    .month-header {
+        font-size: 18px;
+        margin-bottom: 12px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-view {
+        min-width: 600px;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 3px;
+    }
+
+    .exam-item {
+        padding: 2px 4px;
+        font-size: 8px;
+    }
+
+    .exam-tooltip {
+        max-width: 200px;
+        padding: 8px 12px;
+    }
+
+    .tooltip-header {
+        font-size: 12px;
+    }
+
+    .tooltip-details {
+        font-size: 10px;
+    }
+}
