@@ -57,31 +57,31 @@ export const initializeDatabase = async () => {
 const loadCSVData = async () => {
     try {
         // Load ExamSession data
-        const examSessionResponse = await fetch('/data/exam_sessions.csv');
+        const examSessionResponse = await fetch('./data/exam_sessions.csv');
         const examSessionCSV = await examSessionResponse.text();
         const examSessionData = parseCSV(examSessionCSV);
         db.examSessions = examSessionData.data;
 
         // Load SessionDay data
-        const sessionDayResponse = await fetch('/data/session_days.csv');
+        const sessionDayResponse = await fetch('./data/session_days.csv');
         const sessionDayCSV = await sessionDayResponse.text();
         const sessionDayData = parseCSV(sessionDayCSV);
         db.sessionDays = sessionDayData.data;
 
         // Load SemesterExamName data
-        const semesterExamResponse = await fetch('/data/semester_exam_names.csv');
+        const semesterExamResponse = await fetch('./data/semester_exam_names.csv');
         const semesterExamCSV = await semesterExamResponse.text();
         const semesterExamData = parseCSV(semesterExamCSV);
         db.semesterExamNames = semesterExamData.data;
 
         // Load Exam data
-        const examResponse = await fetch('/data/exams.csv');
+        const examResponse = await fetch('./data/exams.csv');
         const examCSV = await examResponse.text();
         const examData = parseCSV(examCSV);
         db.exams = examData.data;
 
         // Load Course data
-        const courseResponse = await fetch('/data/courses.csv');
+        const courseResponse = await fetch('./data/courses.csv');
         const courseCSV = await courseResponse.text();
         const courseData = parseCSV(courseCSV);
         db.courses = courseData.data;
