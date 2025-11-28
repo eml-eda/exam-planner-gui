@@ -9,7 +9,7 @@
     --accent-silver: #adb5bd;
     --text-primary: #2d3748;
     --text-secondary: #4a5568;
-    --text-muted: #718096;
+    --text-muted: #3d3b77;
     --success-green: rgba(72, 187, 120, 0.8);
     --warning-yellow: rgba(237, 137, 54, 0.8);
     --danger-red: rgba(245, 101, 101, 0.8);
@@ -30,7 +30,7 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #66beea 0%, #5e4ba2 100%);
     min-height: 100vh;
     color: var(--text-primary);
 }

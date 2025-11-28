@@ -10,6 +10,7 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showSettings, setShowSettings] = useState(false);
+    const [searching, setSearching] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
 
@@ -63,7 +64,7 @@ const Home = () => {
 
             {/* Main Content */}
             <div className="main-content">
-                <div className="search-container">
+                <div className={`search-container ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { setSearching(false) }}>
                     <SearchComponent />
                 </div>
             </div>

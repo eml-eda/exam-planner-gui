@@ -126,9 +126,15 @@
 }
 
 .search-container {
+    transition: margin-top 0.4s ease, transform 0.4s ease;
+    align-self: flex-start;
     width: 100%;
     max-width: 800px;
-    margin: -100px auto 0;
+    margin-top: 240px;
+}
+
+.search-container.searching {
+    margin-top: 0px;
 }
 
 /* Responsive Design */
