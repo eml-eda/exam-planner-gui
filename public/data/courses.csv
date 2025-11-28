@@ -1,0 +1,11 @@
+id,course_code,course_name,professor_name,credits,description,degree_programs
+1,"216463","Mathematical Analysis I","Prof. Pagliari",12,"Introduction to differential and integral calculus, limits, derivatives, integrals","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+2,"413245","Physics I","Prof. Adams",9,"Fundamental principles of mechanics, thermodynamics, and wave physics","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+3,"567890","Computer Programming","Prof. Johnson",8,"Introduction to programming concepts using Python and Java","Laurea Triennale 3216546545"
+4,"234567","Linear Algebra","Prof. Smith",6,"Vector spaces, matrices, determinants, and linear transformations","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+5,"345678","Chemistry","Prof. Brown",7,"General chemistry principles, atomic structure, and chemical bonding","Laurea Triennale 3216546545"
+6,"456789","English Language","Prof. Wilson",4,"Academic English for technical and scientific communication","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+7,"678901","Technical Drawing","Prof. Davis",5,"Engineering drawing principles and computer-aided design","Laurea Triennale 3216546545"
+8,"789012","Statistics","Prof. Miller",6,"Descriptive and inferential statistics for scientific applications","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+9,"890123","History of Science","Prof. Garcia",3,"Evolution of scientific thought and major scientific discoveries","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
+10,"901234","Materials Science","Prof. Anderson",8,"Properties and applications of engineering materials","Laurea Triennale 3216546545;Laurea Magistrale 541213463"
