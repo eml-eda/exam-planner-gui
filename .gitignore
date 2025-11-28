@@ -3,6 +3,9 @@ node_modules/
 /.pnp
 .pnp.js
 
+# Production build
+/build
+
 # Runtime data
 pids
 *.pid
