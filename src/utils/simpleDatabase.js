@@ -108,10 +108,14 @@ export const searchCourses = (query) => {
     const searchQuery = query.toLowerCase();
 
     return db.courses.filter(course => {
+        const courseName = course.course_name?.toLowerCase() || '';
+        const professorName = course.professor_name?.toLowerCase() || '';
+        const courseCode = course.course_code?.toLowerCase() || '';
+
         return (
-            course.course_name.toLowerCase().includes(searchQuery) ||
-            course.professor_name.toLowerCase().includes(searchQuery) ||
-            course.course_code.toLowerCase().includes(searchQuery)
+            courseName.includes(searchQuery) ||
+            professorName.includes(searchQuery) ||
+            courseCode.includes(searchQuery)
         );
     });
 };
