@@ -2,6 +2,8 @@
 let db = null;
 
 const DB_KEY = 'exams-app-database';
+const DB_VERSION_KEY = 'exams-app-db-version';
+const CURRENT_DB_VERSION = '1.0.1'; // Increment this to force cache clear
 
 // Function to parse CSV data
 const parseCSV = (csvText) => {
@@ -22,6 +24,14 @@ const parseCSV = (csvText) => {
 // Function to initialize the database
 export const initializeDatabase = async () => {
     try {
+        // Check version and clear cache if outdated
+        const storedVersion = localStorage.getItem(DB_VERSION_KEY);
+        if (storedVersion !== CURRENT_DB_VERSION) {
+            console.log('Database version mismatch, clearing cache...');
+            localStorage.removeItem(DB_KEY);
+            localStorage.setItem(DB_VERSION_KEY, CURRENT_DB_VERSION);
+        }
+
         // Check if data exists in localStorage
         const existingData = localStorage.getItem(DB_KEY);
         if (existingData) {
