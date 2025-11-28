@@ -3,7 +3,6 @@ node_modules/
 /.pnp
 .pnp.js
 
-
 # Runtime data
 pids
 *.pid
@@ -90,10 +89,6 @@ public
 
 # Rollup.js default build output
 dist/
-
-# Uncomment the public line in if the project is using Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
 
 # Storybook build outputs
 .out
