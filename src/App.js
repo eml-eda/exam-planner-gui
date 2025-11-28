@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
-import { initializeDatabase } from './utils/simpleDatabase';
+import { initializeDatabase } from './utils/database';
 import Home from './pages/Home';
 import Course from './pages/Course';
 import './index.css';

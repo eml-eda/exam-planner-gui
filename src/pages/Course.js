@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getCourseById, getExamsByCourse } from '../utils/simpleDatabase';
+import { getCourseById, getExamsByCourse } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';

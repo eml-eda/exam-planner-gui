@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getExamsInDateRange } from '../utils/simpleDatabase';
+import { getExamsInDateRange } from '../utils/database';
 import './CalendarView.css';
 
 const CalendarView = ({ courseId, courseName, exams = [] }) => {

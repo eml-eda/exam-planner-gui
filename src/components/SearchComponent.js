@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { searchCourses } from '../utils/simpleDatabase';
+import { searchCourses } from '../utils/database';
 import './SearchComponent.css';
 
 const SearchComponent = () => {
