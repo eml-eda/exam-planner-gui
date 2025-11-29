@@ -106,6 +106,7 @@
 .results-list {
     max-height: 320px;
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-silver) transparent;
 }
