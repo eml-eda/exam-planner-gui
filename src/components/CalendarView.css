@@ -121,7 +121,7 @@
 }
 
 .exam-item.conflict-minor:hover {
-    background: rgba(237, 137, 54, 0.9);
+    background: rgba(221, 255, 0, 0.9);
     box-shadow: 0 4px 16px rgba(237, 137, 54, 0.4);
 }
 
@@ -166,10 +166,9 @@
     z-index: 1000;
     pointer-events: none;
     max-width: 280px;
-    animation: fadeIn 0.2s ease-out;
 
     /* Position the tooltip near the cursor */
-    left: var(--mouse-x, 50%);
+    left: var(--mouse-y, 50%);
     top: var(--mouse-y, 50%);
     transform: translate(10px, -50%);
 }

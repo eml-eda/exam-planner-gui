@@ -10,9 +10,9 @@
     --text-primary: #2d3748;
     --text-secondary: #4a5568;
     --text-muted: #3d3b77;
-    --success-green: rgba(72, 187, 120, 0.8);
-    --warning-yellow: rgba(237, 137, 54, 0.8);
-    --danger-red: rgba(245, 101, 101, 0.8);
+    --success-green: rgba(64, 209, 88, 0.8);
+    --warning-yellow: rgba(209, 249, 33, 0.8);
+    --danger-red: rgba(204, 4, 4, 0.8);
     --backdrop-blur: 16px;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;

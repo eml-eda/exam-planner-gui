@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getExamsInDateRange } from '../utils/database';
+import { getExamsInDateRange, getCourseIdFromExam } from '../utils/database';
 import './CalendarView.css';
 
 const CalendarView = ({ courseId, courseName, exams = [] }) => {
@@ -43,7 +43,7 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
         const endDate = new Date(dateRange.end);
         const weeks = [];
 
-        // Start from Monday of the first week
+        // We should start from the Monday of the week of startDate
         const current = new Date(startDate);
         const dayOfWeek = current.getDay();
         const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
@@ -56,8 +56,6 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
                 current.setDate(current.getDate() + 1);
             }
             weeks.push(week);
-
-            if (current > endDate) break;
         }
 
         return weeks;
@@ -96,9 +94,13 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
 
     const handleExamClick = (exam) => {
         if (exam.course_name !== courseName) {
-            // Navigate to the clicked course
-            // First, find the course ID by course name
-            navigate(`/course/${exam.id}`); // This is simplified - you might need to get actual course ID
+            // Get the course ID by traversing semester_exam_name_id -> exam_name -> course_name
+            const courseId = getCourseIdFromExam(exam);
+            if (courseId) {
+                navigate(`/course/${courseId}`);
+            } else {
+                console.error('Could not find course ID for exam:', exam);
+            }
         }
     };
 
