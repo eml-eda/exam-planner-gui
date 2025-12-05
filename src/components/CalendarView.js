@@ -50,13 +50,14 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
             }
         };
 
-        if (hoveredExam && containerRef.current) {
-            containerRef.current.addEventListener('mousemove', handleMouseMove);
+        const container = containerRef.current;
+        if (hoveredExam && container) {
+            container.addEventListener('mousemove', handleMouseMove);
         }
 
         return () => {
-            if (containerRef.current) {
-                containerRef.current.removeEventListener('mousemove', handleMouseMove);
+            if (container) {
+                container.removeEventListener('mousemove', handleMouseMove);
             }
         };
     }, [hoveredExam]);

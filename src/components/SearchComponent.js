@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { searchCourses, getCourseInstances } from '../utils/database';
@@ -26,24 +26,9 @@ const SearchComponent = ({ setlocked }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [setlocked]);
 
-    useEffect(() => {
-        const searchTimeout = setTimeout(() => {
-            if (query.trim()) {
-                performSearch(query.trim());
-            } else {
-                setResults([]);
-                setShowResults(false);
-                setlocked?.(false);
-                setIsLoading(false);
-            }
-        }, 300);
-
-        return () => clearTimeout(searchTimeout);
-    }, [query]);
-
-    const performSearch = async (searchQuery) => {
+    const performSearch = useCallback(async (searchQuery) => {
         if (!searchQuery) {
             setResults([]);
             setShowResults(false);
@@ -75,7 +60,22 @@ const SearchComponent = ({ setlocked }) => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [setlocked]);
+
+    useEffect(() => {
+        const searchTimeout = setTimeout(() => {
+            if (query.trim()) {
+                performSearch(query.trim());
+            } else {
+                setResults([]);
+                setShowResults(false);
+                setlocked?.(false);
+                setIsLoading(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(searchTimeout);
+    }, [query, performSearch, setlocked]);
 
     const handleInputChange = (e) => {
         const value = e.target.value;
