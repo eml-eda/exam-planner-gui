@@ -142,6 +142,12 @@
     transition: var(--transition-smooth);
 }
 
+
+.section-container.collapsed {
+    background: var(--glass-shadow);
+    backdrop-filter: blur(var(--backdrop-blur));
+}
+
 .section-container:first-child {
     flex: 3;
 }
@@ -150,7 +156,7 @@
     flex: 1;
 }
 
-.section-container:hover {
+.section-container.expanded:hover {
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.3);
 }
