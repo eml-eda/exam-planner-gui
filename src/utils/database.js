@@ -1,4 +1,3 @@
-// Simple in-memory database using localStorage for persistence
 let db = null;
 
 const DB_KEY = 'exams-app-database';
@@ -257,7 +256,7 @@ export const getCourseIdFromExam = (exam) => {
     return course?.id || null;
 };
 
-// Function to clear database (for testing)
+// Function to clear database 
 export const clearDatabase = () => {
     localStorage.removeItem(DB_KEY);
     db = null;

@@ -184,7 +184,7 @@
 
 .course-code {
     font-weight: 600;
-    color: var(--accent-silver);
+    color: var(--silver-medium);
 }
 
 .professor-name {
@@ -224,8 +224,8 @@
 .highlight {
     background: rgba(255, 255, 255, 0.3);
     color: var(--text-primary);
-    padding: 1px 3px;
-    border-radius: 3px;
+    padding: 0px 1px 3px 1px;
+    border-radius: 5px;
     font-weight: 600;
 }
 

@@ -13,6 +13,7 @@ const Home = () => {
     const [searching, setSearching] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
+    const [locked, setlocked] = useState(false);
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -64,8 +65,8 @@ const Home = () => {
 
             {/* Main Content */}
             <div className="main-content">
-                <div className={`search-container ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { setSearching(false) }}>
-                    <SearchComponent />
+                <div className={`search-container ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { if (!locked) setSearching(false) }}>
+                    <SearchComponent setlocked={setlocked} />
                 </div>
             </div>
 

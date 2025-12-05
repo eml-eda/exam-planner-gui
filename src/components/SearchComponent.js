@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { searchCourses } from '../utils/database';
+import { searchCourses, getCourseInstances } from '../utils/database';
 import './SearchComponent.css';
 
-const SearchComponent = () => {
+const SearchComponent = ({ setlocked }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
@@ -18,6 +18,7 @@ const SearchComponent = () => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
                 setShowResults(false);
+                setlocked?.(false);
             }
         };
 
@@ -34,6 +35,8 @@ const SearchComponent = () => {
             } else {
                 setResults([]);
                 setShowResults(false);
+                setlocked?.(false);
+                setIsLoading(false);
             }
         }, 300);
 
@@ -44,18 +47,31 @@ const SearchComponent = () => {
         if (!searchQuery) {
             setResults([]);
             setShowResults(false);
+            setlocked?.(false);
             return;
         }
 
         setIsLoading(true);
         try {
             const searchResults = await searchCourses(searchQuery);
-            setResults(searchResults);
-            setShowResults(searchResults.length > 0);
+            // Enrich results with course instances (professors)
+            const enrichedResults = await Promise.all(
+                searchResults.map(async (course) => {
+                    const instances = await getCourseInstances(course.course_code);
+                    return {
+                        ...course,
+                        professors: instances.map(inst => inst.professor_name)
+                    };
+                })
+            );
+            setResults(enrichedResults);
+            setShowResults(enrichedResults.length > 0);
+            setlocked?.(enrichedResults.length > 0);
         } catch (error) {
             console.error('Search error:', error);
             setResults([]);
             setShowResults(false);
+            setlocked?.(false);
         } finally {
             setIsLoading(false);
         }
@@ -69,12 +85,18 @@ const SearchComponent = () => {
     const handleInputFocus = () => {
         if (results.length > 0) {
             setShowResults(true);
+            setlocked?.(true);
+        }
+        // Select all text when focusing the input
+        if (inputRef.current) {
+            inputRef.current.select();
         }
     };
 
     const handleCourseClick = (course) => {
         setQuery('');
         setShowResults(false);
+        setlocked?.(false);
         navigate(`/course/${course.id}`);
     };
 
@@ -85,9 +107,7 @@ const SearchComponent = () => {
         const parts = text.split(regex);
 
         return parts.map((part, index) =>
-            regex.test(part) ?
-                <span key={index} className="highlight">{part}</span> :
-                part
+            regex.test(part) ? <span key={index} className="highlight">{part}</span> : part
         );
     };
 
@@ -137,10 +157,19 @@ const SearchComponent = () => {
                                             <span className="course-code">
                                                 {highlightMatch(course.course_code, query)}
                                             </span>
-                                            <span className="separator">•</span>
-                                            <span className="professor-name">
-                                                {highlightMatch(course.professor_name, query)}
-                                            </span>
+                                            {course.professors && course.professors.length > 0 && (
+                                                <>
+                                                    <span className="separator">•</span>
+                                                    <span className="professor-name">
+                                                        {course.professors.map((prof, i) => (
+                                                            <span key={i}>
+                                                                {highlightMatch(prof, query)}
+                                                                {i < course.professors.length - 1 ? ', ' : ''}
+                                                            </span>
+                                                        ))}
+                                                    </span>
+                                                </>
+                                            )}
                                             {course.credits && (
                                                 <>
                                                     <span className="separator">•</span>
