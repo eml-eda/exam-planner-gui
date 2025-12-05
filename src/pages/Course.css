@@ -125,8 +125,7 @@
 }
 
 .content-sections {
-    /* max-width: 1200px; */
-    margin: 0 auto;
+    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 20px;
@@ -141,6 +140,14 @@
     box-shadow: 0 8px 32px var(--glass-shadow);
     overflow: hidden;
     transition: var(--transition-smooth);
+}
+
+.section-container:first-child {
+    flex: 3;
+}
+
+.section-container:last-child {
+    flex: 1;
 }
 
 .section-container:hover {

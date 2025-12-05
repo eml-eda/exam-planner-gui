@@ -10,6 +10,8 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
     const [allExams, setAllExams] = useState([]);
     const [dateRange, setDateRange] = useState({ start: '2026-01-01', end: '2026-02-28' });
     const [hoveredExam, setHoveredExam] = useState(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const containerRef = React.useRef(null);
 
     useEffect(() => {
         // Load date range from localStorage if available
@@ -36,6 +38,28 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
 
         loadAllExams();
     }, [dateRange]);
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setMousePosition({
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                });
+            }
+        };
+
+        if (hoveredExam && containerRef.current) {
+            containerRef.current.addEventListener('mousemove', handleMouseMove);
+        }
+
+        return () => {
+            if (containerRef.current) {
+                containerRef.current.removeEventListener('mousemove', handleMouseMove);
+            }
+        };
+    }, [hoveredExam]);
 
     // Generate calendar weeks
     const generateCalendarWeeks = () => {
@@ -131,66 +155,77 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
     }
 
     return (
-        <div className="calendar-view">
-            {monthGroups.map(({ month, weeks }, monthIndex) => (
-                <div key={monthIndex} className="month-section">
-                    <h3 className="month-header">{month}</h3>
+        <div className="calendar-container" ref={containerRef}>
+            <div className="calendar-view">
+                {monthGroups.map(({ month, weeks }, monthIndex) => (
+                    <div key={monthIndex} className="month-section">
+                        <h3 className="month-header">{month}</h3>
 
-                    {/* Day headers */}
-                    <div className="calendar-header">
-                        {Array.from({ length: 7 }, (_, i) => (
-                            <div key={i} className="day-header">
-                                {formatDay(i)}
-                            </div>
-                        ))}
-                    </div>
+                        {/* Day headers */}
+                        <div className="calendar-header">
+                            {Array.from({ length: 7 }, (_, i) => (
+                                <div key={i} className="day-header">
+                                    {formatDay(i)}
+                                </div>
+                            ))}
+                        </div>
 
-                    {/* Calendar weeks */}
-                    <div className="calendar-grid">
-                        {weeks.map((week, weekIndex) => (
-                            <div key={weekIndex} className="calendar-week">
-                                {week.map((date, dayIndex) => {
-                                    const dayExams = getExamsForDate(date);
-                                    const isInRange = date >= new Date(dateRange.start) && date <= new Date(dateRange.end);
+                        {/* Calendar weeks */}
+                        <div className="calendar-grid">
+                            {weeks.map((week, weekIndex) => (
+                                <div key={weekIndex} className="calendar-week">
+                                    {week.map((date, dayIndex) => {
+                                        const dayExams = getExamsForDate(date);
+                                        const isInRange = date >= new Date(dateRange.start) && date <= new Date(dateRange.end);
 
-                                    return (
-                                        <div
-                                            key={dayIndex}
-                                            className={`calendar-day ${!isInRange ? 'out-of-range' : ''}`}
-                                        >
-                                            <div className="day-number">
-                                                {date.getDate()}
-                                            </div>
-
-                                            {dayExams.length > 0 && isInRange && (
-                                                <div className="day-exams">
-                                                    {dayExams.map((exam, examIndex) => (
-                                                        <div
-                                                            key={examIndex}
-                                                            className={`exam-item ${getExamColor(exam)}`}
-                                                            onClick={() => handleExamClick(exam)}
-                                                            onMouseEnter={() => setHoveredExam(exam)}
-                                                            onMouseLeave={() => setHoveredExam(null)}
-                                                        >
-                                                            <span className="exam-code">
-                                                                {exam.course_code}
-                                                            </span>
-                                                        </div>
-                                                    ))}
+                                        return (
+                                            <div
+                                                key={dayIndex}
+                                                className={`calendar-day ${!isInRange ? 'out-of-range' : ''}`}
+                                            >
+                                                <div className="day-number">
+                                                    {date.getDate()}
                                                 </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ))}
+
+                                                {dayExams.length > 0 && isInRange && (
+                                                    <div className="day-exams">
+                                                        {dayExams.map((exam, examIndex) => (
+                                                            <div
+                                                                key={examIndex}
+                                                                className={`exam-item ${getExamColor(exam)}`}
+                                                                onClick={() => handleExamClick(exam)}
+                                                                onMouseEnter={() => setHoveredExam(exam)}
+                                                                onMouseLeave={() => setHoveredExam(null)}
+                                                            >
+                                                                <p className="exam-code">
+                                                                    {exam.course_code}
+                                                                </p>
+                                                                <p className="exam-code">
+                                                                    ({exam.registered_students_num} / {exam.registered_students_num})
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
 
             {/* Exam tooltip */}
             {hoveredExam && (
-                <div className="exam-tooltip">
+                <div
+                    className="exam-tooltip"
+                    style={{
+                        left: `${mousePosition.x + 15}px`,
+                        top: `${mousePosition.y + 15}px`
+                    }}
+                >
                     <div className="tooltip-header">
                         <strong>{hoveredExam.course_name}</strong>
                     </div>
@@ -198,7 +233,8 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
                         <div>Code: {hoveredExam.course_code}</div>
                         <div>Professor: {hoveredExam.professor_name}</div>
                         <div>Time: {hoveredExam.start_time} - {hoveredExam.end_time}</div>
-                        <div>Students: {hoveredExam.registered_students_num}</div>
+                        <div>Total Students: {hoveredExam.registered_students_num}</div>
+                        <div>New Students: {hoveredExam.registered_students_num}</div>
                     </div>
                 </div>
             )}

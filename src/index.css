@@ -11,7 +11,7 @@
     --text-secondary: #4a5568;
     --text-muted: #3d3b77;
     --success-green: rgba(64, 209, 88, 0.8);
-    --warning-yellow: rgba(209, 249, 33, 0.8);
+    --warning-yellow: rgba(187, 229, 0, 0.8);
     --danger-red: rgba(204, 4, 4, 0.8);
     --backdrop-blur: 16px;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

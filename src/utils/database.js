@@ -2,7 +2,7 @@ let db = null;
 
 const DB_KEY = 'exams-app-database';
 const DB_VERSION_KEY = 'exams-app-db-version';
-const CURRENT_DB_VERSION = '1.1.0'; // Increment this to force cache clear
+const CURRENT_DB_VERSION = '1.1.1'; // Increment this to force cache clear
 
 // Function to parse CSV data
 const parseCSV = (csvText) => {
