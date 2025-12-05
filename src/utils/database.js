@@ -3,7 +3,7 @@ let db = null;
 
 const DB_KEY = 'exams-app-database';
 const DB_VERSION_KEY = 'exams-app-db-version';
-const CURRENT_DB_VERSION = '1.0.1'; // Increment this to force cache clear
+const CURRENT_DB_VERSION = '1.1.0'; // Increment this to force cache clear
 
 // Function to parse CSV data
 const parseCSV = (csvText) => {
@@ -46,7 +46,8 @@ export const initializeDatabase = async () => {
             sessionDays: [],
             semesterExamNames: [],
             exams: [],
-            courses: []
+            courses: [],
+            courseInstances: []
         };
 
         // Load CSV data
@@ -96,6 +97,12 @@ const loadCSVData = async () => {
         const courseData = parseCSV(courseCSV);
         db.courses = courseData.data;
 
+        // Load CourseInstance data
+        const courseInstanceResponse = await fetch('./data/course_instances.csv');
+        const courseInstanceCSV = await courseInstanceResponse.text();
+        const courseInstanceData = parseCSV(courseInstanceCSV);
+        db.courseInstances = courseInstanceData.data;
+
         console.log('CSV data loaded successfully');
     } catch (error) {
         console.error('Error loading CSV data:', error);
@@ -119,13 +126,18 @@ export const searchCourses = (query) => {
 
     return db.courses.filter(course => {
         const courseName = course.course_name?.toLowerCase() || '';
-        const professorName = course.professor_name?.toLowerCase() || '';
         const courseCode = course.course_code?.toLowerCase() || '';
+
+        // Also search in course instances for professor names
+        const instances = db.courseInstances.filter(inst => inst.course_code === course.course_code);
+        const professorMatch = instances.some(inst =>
+            inst.professor_name?.toLowerCase().includes(searchQuery)
+        );
 
         return (
             courseName.includes(searchQuery) ||
-            professorName.includes(searchQuery) ||
-            courseCode.includes(searchQuery)
+            courseCode.includes(searchQuery) ||
+            professorMatch
         );
     });
 };
@@ -168,13 +180,20 @@ export const getExamsByCourse = (courseName) => {
     // Find exams for this semester exam
     return db.exams
         .filter(exam => exam.semester_exam_name_id === semesterExam.id)
-        .map(exam => ({
-            ...exam,
-            exam_name: semesterExam.exam_name,
-            course_code: course.course_code,
-            course_name: course.course_name,
-            professor_name: course.professor_name
-        }));
+        .map(exam => {
+            // Find the course instance (professor) for this exam
+            const instance = db.courseInstances.find(inst =>
+                inst.course_code === course.course_code
+            );
+
+            return {
+                ...exam,
+                exam_name: semesterExam.exam_name,
+                course_code: course.course_code,
+                course_name: course.course_name,
+                professor_name: instance?.professor_name || 'N/A'
+            };
+        });
 };
 
 // Function to get all exams in date range
@@ -194,15 +213,29 @@ export const getExamsInDateRange = (startDate, endDate) => {
                 c.course_name === semesterExam?.exam_name
             );
 
+            // Find the course instance (professor) for this exam
+            const instance = db.courseInstances.find(inst =>
+                inst.course_code === course?.course_code
+            );
+
             return {
                 ...exam,
                 exam_name: semesterExam?.exam_name,
                 course_code: course?.course_code,
                 course_name: course?.course_name,
-                professor_name: course?.professor_name
+                professor_name: instance?.professor_name || 'N/A'
             };
         })
         .filter(exam => exam.course_name); // Filter out exams without course data
+};
+
+// Function to get course instances by course code
+export const getCourseInstances = (courseCode) => {
+    if (!db || !courseCode) return [];
+
+    return db.courseInstances.filter(instance =>
+        instance.course_code === courseCode
+    );
 };
 
 // Function to get course ID from exam
@@ -237,6 +270,7 @@ const databaseApi = {
     getCourseById,
     getExamsByCourse,
     getExamsInDateRange,
+    getCourseInstances,
     getCourseIdFromExam,
     clearDatabase
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getCourseById, getExamsByCourse } from '../utils/database';
+import { getCourseById, getExamsByCourse, getCourseInstances } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
@@ -13,12 +13,13 @@ const Course = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
     const [course, setCourse] = useState(null);
     const [exams, setExams] = useState([]);
+    const [courseInstances, setCourseInstances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
-    const [showExams, setShowExams] = useState(false);
-    const [showInfo, setShowInfo] = useState(false);
+    const [showExams, setShowExams] = useState(true);
+    const [showInfo, setShowInfo] = useState(true);
 
     useEffect(() => {
         const loadCourseData = async () => {
@@ -29,6 +30,8 @@ const Course = () => {
                     setCourse(courseData);
                     const examData = await getExamsByCourse(courseData.course_name);
                     setExams(examData);
+                    const instances = await getCourseInstances(courseData.course_code);
+                    setCourseInstances(instances);
                 }
             } catch (error) {
                 console.error('Error loading course data:', error);
@@ -156,8 +159,8 @@ const Course = () => {
                                     </div>
 
                                     <div className="info-group">
-                                        <h3>{t('professor')}:</h3>
-                                        <p>{course.professor_name}</p>
+                                        <h3>{t('courseCode')}:</h3>
+                                        <p>{course.course_code}</p>
                                     </div>
 
                                     {course.credits && (
@@ -178,13 +181,6 @@ const Course = () => {
                                         </div>
                                     )}
 
-                                    {exams.length > 0 && (
-                                        <div className="info-group">
-                                            <h3>{t('studentNumber')}:</h3>
-                                            <p>{exams[0]?.registered_students_num || 'N/A'}</p>
-                                        </div>
-                                    )}
-
                                     {course.description && (
                                         <div className="info-group">
                                             <h3>{t('description')}:</h3>
@@ -192,15 +188,14 @@ const Course = () => {
                                         </div>
                                     )}
 
-                                    {exams.length > 0 && (
+                                    {courseInstances.length > 0 && (
                                         <div className="info-group">
                                             <h3>{t('instances')}:</h3>
                                             <div className="exam-instances">
-                                                {exams.map((exam) => (
-                                                    <div key={exam.id} className="exam-instance">
-                                                        <span className="exam-date">{exam.date}</span>
-                                                        <span className="exam-time">{exam.start_time} - {exam.end_time}</span>
-                                                        <span className="exam-students">{exam.registered_students_num} students</span>
+                                                {courseInstances.map((instance) => (
+                                                    <div key={instance.id} className="exam-instance">
+                                                        <span className="exam-date">{instance.professor_name}</span>
+                                                        <span className="exam-students">{instance.students_num} students</span>
                                                     </div>
                                                 ))}
                                             </div>
