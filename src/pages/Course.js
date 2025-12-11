@@ -6,6 +6,7 @@ import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
+import { getExams } from '../utils/api_calls';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -41,6 +42,12 @@ const Course = () => {
         };
 
         loadCourseData();
+    }, [courseId]);
+
+    useEffect(() => {
+        getExams(courseId)
+            .then(data => console.log(data))
+            .catch(err => console.error(err));
     }, [courseId]);
 
     const handleBack = () => {
