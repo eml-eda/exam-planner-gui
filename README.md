@@ -1,6 +1,6 @@
 # University Exam Schedule Organizer
 
-A React application for organizing and viewing university exam schedules.
+A modern React application for organizing and viewing university exam schedules with a beautiful glass-morphism design.
 
 ## Features
 
@@ -25,8 +25,8 @@ A React application for organizing and viewing university exam schedules.
 - **Weekly calendar view** with scrollable months
 - **Color-coded exams**:
   - 🟢 **Green**: Current course exams
-  - 🟡 **Yellow**:
-  - 🔴 **Red**: 
+  - 🟡 **Yellow**: Conflicts (±1 day)
+  - 🔴 **Red**: Major conflicts (±2 days)
   - ⚪ **Neutral**: Other exams
 - **Hover tooltips** with detailed exam information
 - **Configurable date ranges**
@@ -51,6 +51,51 @@ A React application for organizing and viewing university exam schedules.
 - **CSV data import** with client-side processing
 - **100% client-side** - no server required
 
+## Data Structure
+
+The application uses the following database schema:
+
+### ExamSession
+- `id` (Primary Key)
+- `name`
+- `academic_year`
+- `start_date`
+- `end_date`
+
+### SessionDay
+- `date` (Primary Key)
+- `exam_session_id` (Foreign Key)
+
+### SemesterExamName
+- `id` (Primary Key)
+- `academic_year`
+- `semester`
+- `exam_name`
+- `start_date`
+- `end_date`
+- `exam_session_id` (Foreign Key)
+
+### Exam
+- `id` (Primary Key)
+- `id_portale`
+- `date`
+- `start_time`
+- `end_time`
+- `application_deadline`
+- `registered_students_num`
+- `is_visible`
+- `exam_type_id`
+- `exam_group_id`
+- `semester_exam_name_id` (Foreign Key)
+
+### Course
+- `id` (Primary Key)
+- `course_code`
+- `course_name`
+- `professor_name`
+- `credits`
+- `description`
+- `degree_programs`
 
 ## Installation and Setup
 
@@ -69,6 +114,14 @@ A React application for organizing and viewing university exam schedules.
    ```bash
    npm install
    ```
+
+3. **Start development server**
+   ```bash
+   npm start
+   ```
+
+4. **Access the application**
+   - Open your browser and go to `http://localhost:3000`
 
 ### Building for Production
 
@@ -113,6 +166,47 @@ The built files will be in the `build/` directory and can be deployed to any sta
 - Settings persist between sessions
 - Default range: January 1, 2026 - February 28, 2026
 
+## Data Customization
+
+To use your own data:
+
+1. **Replace CSV files** in `public/data/` with your own:
+   - `exam_sessions.csv`
+   - `session_days.csv`
+   - `semester_exam_names.csv`
+   - `exams.csv`
+   - `courses.csv`
+
+2. **Follow the CSV format** shown in the existing files
+
+3. **Restart the application** - data will be automatically loaded
+
+## Architecture Highlights
+
+### Offline-First Design
+- **No server dependencies** after initial load
+- **localStorage persistence** for settings and data
+- **CSV-based data loading** via fetch API
+- **Works completely offline** after first visit
+
+### Responsive Design
+- **Mobile-first approach**
+- **Flexible layouts** that adapt to screen size
+- **Touch-friendly interface**
+- **Optimized for all devices**
+
+### Performance Optimizations
+- **Lazy loading** of components
+- **Efficient re-renders** with React hooks
+- **Debounced search** to prevent excessive queries
+- **Cached data** in memory and localStorage
+
+### Browser Support
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- ES6+ features
+- CSS Grid and Flexbox
+- Local storage API
+
 ## Customization
 
 ### Theming
@@ -144,3 +238,11 @@ Exam colors can be customized in `src/components/CalendarView.css`:
 .exam-item.conflict-minor { background: var(--warning-yellow); }
 .exam-item.conflict-major { background: var(--danger-red); }
 ```
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Support
+
+For questions or support, please refer to the code documentation or create an issue in the project repository.
