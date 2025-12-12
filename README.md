@@ -1,4 +1,4 @@
-# University Exam Schedule Organizer
+# University Exam Schedule Organizer GUI
 
 A React application for organizing and viewing university exam schedules.
 
