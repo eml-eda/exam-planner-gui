@@ -44,11 +44,7 @@ const Course = () => {
         loadCourseData();
     }, [courseId]);
 
-    useEffect(() => {
-        getExams(courseId)
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
-    }, [courseId]);
+    
 
     const handleBack = () => {
         navigate(-1);
