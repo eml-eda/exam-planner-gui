@@ -4,7 +4,7 @@ A React application for viewing university exam schedules.
 
 ## Features
 
-### 🎨 Modern UI/UX
+### 🎨 Modern UI/UX/
 - **Glass-morphism design** with silver-themed UI
 - **Smooth animations** and hover effects
 - **Responsive layout** that works on all devices
