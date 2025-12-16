@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-export const getExams = async (courseCode) => {
+export const getExamConflicts = async (courseCode) => {
     try {
         const response = await axios.get(`http://127.0.0.1:8000/exams_apelli/${courseCode}`);
         return response.data;

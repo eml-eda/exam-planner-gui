@@ -6,7 +6,7 @@ import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
-import { getExams } from '../utils/api_calls';
+import { getExamConflicts } from '../utils/api_calls';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -21,30 +21,46 @@ const Course = () => {
     const [backHover, setBackHover] = useState(false);
     const [showExams, setShowExams] = useState(true);
     const [showInfo, setShowInfo] = useState(true);
+    const [apiLoading, setApiLoading] = useState(true);
+    const [examConflicts, setExamConflicts] = useState([]);
 
     useEffect(() => {
-        const loadCourseData = async () => {
-            try {
-                setLoading(true);
-                const courseData = await getCourseById(courseId);
-                if (courseData) {
-                    setCourse(courseData);
-                    const examData = await getExamsByCourse(courseData.course_name);
-                    setExams(examData);
-                    const instances = await getCourseInstances(courseData.course_code);
-                    setCourseInstances(instances);
-                }
-            } catch (error) {
-                console.error('Error loading course data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
+        getConflictExams();
         loadCourseData();
     }, [courseId]);
 
-    
+    const loadCourseData = async () => {
+        try {
+            setLoading(true);
+            const courseData = await getCourseById(courseId);
+            if (courseData) {
+                setCourse(courseData);
+                const examData = await getExamsByCourse(courseData.course_name);
+                setExams(examData);
+                const instances = await getCourseInstances(courseData.course_code);
+                setCourseInstances(instances);
+            }
+        } catch (error) {
+            console.error('Error loading course data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    async function getConflictExams() {
+        try {
+            setApiLoading(true);
+            console.log("Fetching exam conflicts for course code 06LSLLM");
+            const data = await getExamConflicts("06LSLLM");
+            console.table(data);
+            setExamConflicts(data);
+        } catch (error) {
+            console.error('Error fetching exam conflicts:', error);
+        } finally {
+            setApiLoading(false);
+        }
+    }
+
 
     const handleBack = () => {
         navigate(-1);
@@ -134,11 +150,25 @@ const Course = () => {
 
                         {showExams && (
                             <div className="section-content">
-                                <CalendarView
-                                    courseId={courseId}
-                                    courseName={course.course_name}
-                                    exams={exams}
-                                />
+                                {apiLoading ? (
+                                    <div className="skeleton-loading">
+                                        <p className="loading-text">Loading Exams Data...</p>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                        <div className="skeleton-row"></div>
+                                    </div>
+                                ) : (
+                                    <CalendarView
+                                        courseId={courseId}
+                                        courseName={course.course_name}
+                                        exams={exams}
+                                    />
+                                )}
                             </div>
                         )}
                     </div>
