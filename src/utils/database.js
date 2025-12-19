@@ -4,6 +4,60 @@ let courses = null;
 const COURSES_KEY = 'exams-app-courses';
 const COURSES_VERSION_KEY = 'exams-app-courses-version';
 const CURRENT_COURSES_VERSION = '1.0.0';
+const EXAM_CACHE_PREFIX = 'exam-cache-';
+const EXAM_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+// Function to get cached exam data for a course
+export const getCachedExams = (courseCode) => {
+    try {
+        const cacheKey = `${EXAM_CACHE_PREFIX}${courseCode}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+            const { data, timestamp } = JSON.parse(cached);
+            const now = Date.now();
+            if (now - timestamp < EXAM_CACHE_DURATION) {
+                console.log(`Using cached exam data for ${courseCode}`);
+                return data;
+            }
+            console.log(`Cached exam data for ${courseCode} expired`);
+        }
+    } catch (error) {
+        console.error('Error reading exam cache:', error);
+    }
+    return null;
+};
+
+// Function to cache exam data for a course
+export const cacheExams = (courseCode, examData) => {
+    try {
+        const cacheKey = `${EXAM_CACHE_PREFIX}${courseCode}`;
+        const cacheEntry = {
+            data: examData,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheEntry));
+        console.log(`Cached exam data for ${courseCode}`);
+    } catch (error) {
+        console.error('Error caching exam data:', error);
+    }
+};
+
+// Function to clear all exam caches
+export const clearAllExamCaches = () => {
+    try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(EXAM_CACHE_PREFIX)) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        console.log(`Cleared ${keysToRemove.length} exam caches`);
+    } catch (error) {
+        console.error('Error clearing exam caches:', error);
+    }
+};
 
 // Function to initialize courses from back-end API **
 export const initializeCourses = async () => {
@@ -108,7 +162,10 @@ const databaseApi = {
     searchCourses,
     getCourseById,
     refreshCoursesFromApi,
-    clearCoursesCache
+    clearCoursesCache,
+    getCachedExams,
+    cacheExams,
+    clearAllExamCaches
 };
 
 export default databaseApi;
