@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getCourseById, getExamsByCourse, getCourseInstances } from '../utils/database';
+import { getCourseById } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
@@ -13,8 +13,6 @@ const Course = () => {
     const navigate = useNavigate();
     const { isEnglish, toggleLanguage, t } = useLanguage();
     const [course, setCourse] = useState(null);
-    const [exams, setExams] = useState([]);
-    const [courseInstances, setCourseInstances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
@@ -35,10 +33,6 @@ const Course = () => {
             const courseData = await getCourseById(courseId);
             if (courseData) {
                 setCourse(courseData);
-                const examData = await getExamsByCourse(courseData.course_name);
-                setExams(examData);
-                const instances = await getCourseInstances(courseData.course_code);
-                setCourseInstances(instances);
             }
         } catch (error) {
             console.error('Error loading course data:', error);
@@ -50,8 +44,8 @@ const Course = () => {
     async function getExams() {
         try {
             setApiLoading(true);
-            console.log("Fetching exam conflicts for course code 06LSLLM");
-            const data = await getExamsApi("06LSLLM");
+            console.log(`Fetching exam conflicts for course code ${courseId}`);
+            const data = await getExamsApi(courseId);
             console.table(data);
             setExamConflicts(data);
         } catch (error) {
@@ -88,8 +82,6 @@ const Course = () => {
             </div>
         );
     }
-
-    const degreePrograms = course.degree_programs ? course.degree_programs.split(';') : [];
 
     return (
         <div className="course-container">
@@ -165,8 +157,8 @@ const Course = () => {
                                 ) : (
                                     <CalendarView
                                         courseId={courseId}
-                                        courseName={course.course_name}
-                                        exams={exams}
+                                        courseName={course.title}
+                                        examConflicts={examConflicts}
                                     />
                                 )}
                             </div>
@@ -188,61 +180,57 @@ const Course = () => {
                                 <div className="course-info-content">
                                     <div className="info-group">
                                         <h3>{t('name')}:</h3>
-                                        <p>{course.course_name}</p>
+                                        <p>{course.title}</p>
                                     </div>
 
                                     <div className="info-group">
                                         <h3>{t('courseCode')}:</h3>
-                                        <p>{course.course_code}</p>
+                                        <p>{course.code}</p>
                                     </div>
 
-                                    {course.credits && (
-                                        <div className="info-group">
-                                            <h3>{t('credits')}:</h3>
-                                            <p>{course.credits}</p>
-                                        </div>
-                                    )}
+                                    <div className="info-group">
+                                        <h3>{t('activeStudents')}:</h3>
+                                        <p>{course.students_active}</p>
+                                    </div>
 
-                                    {degreePrograms.length > 0 && (
-                                        <div className="info-group">
-                                            <h3>{t('degreePrograms')}:</h3>
-                                            <ul>
-                                                {degreePrograms.map((program, index) => (
-                                                    <li key={index}>{program.trim()}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
 
-                                    {course.description && (
-                                        <div className="info-group">
-                                            <h3>{t('description')}:</h3>
-                                            <p>{course.description}</p>
-                                        </div>
-                                    )}
+                                    <div className="info-group">
+                                        <h3>{t('newStudents')}:</h3>
+                                        <p>{course.students_new}</p>
+                                    </div>
 
-                                    {courseInstances.length > 0 && (
+
+                                    {course.instances && course.instances.length > 0 && (
                                         <div className="info-group">
-                                            <h3>{t('instances')}:</h3>
-                                            <div className="exam-instances">
-                                                {courseInstances.map((instance) => (
-                                                    <div key={instance.id} className="exam-instance">
-                                                        <span className="exam-date">{instance.professor_name}</span>
-                                                        <span className="exam-students">{instance.students_num} students</span>
+                                            <h3>{t('courseInstances')}:</h3>
+                                            <div className="instances-list">
+                                                {course.instances.map((instance) => (
+                                                    <div key={instance.id} className="instance-item">
+                                                        <div className="instance-header">
+                                                            <span className="instance-code">📚 {instance.id} - {instance.course_number}</span>
+                                                            <span className="instance-year">{instance.academic_year}</span>
+                                                        </div>
+                                                        <div className="instance-instructor">
+                                                            👨‍🏫 {instance.instructor}
+                                                        </div>
+                                                        {instance.alpha_range && (
+                                                            <div className="instance-alpha">
+                                                                🔤 {instance.alpha_range}
+                                                            </div>
+                                                        )}
+                                                        <div className="instance-details">
+                                                            <span className="instance-stat">
+                                                                👥 Active: {instance.num_active_students}
+                                                            </span>
+                                                            <span className="instance-stat">
+                                                                ✨ New: {instance.num_new_students}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
-
-                                    <div className="action-buttons">
-                                        <button className="btn btn-glass">
-                                            {t('studentsList')}
-                                        </button>
-                                        <button className="btn btn-glass">
-                                            {t('conflicts')}
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         )}

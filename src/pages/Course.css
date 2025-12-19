@@ -149,11 +149,11 @@
 }
 
 .section-container:first-child {
-    flex: 3;
+    flex: 5;
 }
 
 .section-container:last-child {
-    flex: 1;
+    flex: 2;
 }
 
 .section-container.expanded:hover {
@@ -276,6 +276,111 @@
     gap: 12px;
     flex-wrap: wrap;
     margin-top: 16px;
+}
+
+.instructors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.instructor-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+}
+
+.instructor-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.instructor-bullet {
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.instructor-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.instances-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.instance-item {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: var(--transition-smooth);
+}
+
+.instance-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.instance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instance-code {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.instance-year {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.instance-instructor {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.instance-alpha {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.instance-details {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.instance-stat {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 8px;
 }
 
 .btn {
