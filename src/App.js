@@ -10,7 +10,6 @@ const SESSION_CONFIG_KEY = 'exam-session-config';
 function App() {
     const [databaseReady, setDatabaseReady] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Initialize session config with defaults if not exists
@@ -34,23 +33,6 @@ function App() {
                 <div className="glass p-3 text-center">
                     <h2>Loading Exam Scheduler...</h2>
                     <p className="mt-2">Initializing database and loading course data...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="container flex justify-center align-center" style={{ minHeight: '100vh' }}>
-                <div className="glass p-3 text-center">
-                    <h2>Error</h2>
-                    <p className="mt-2">{error}</p>
-                    <button
-                        className="btn btn-glass mt-2"
-                        onClick={() => window.location.reload()}
-                    >
-                        Refresh Page
-                    </button>
                 </div>
             </div>
         );

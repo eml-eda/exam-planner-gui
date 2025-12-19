@@ -25,7 +25,7 @@ const Course = () => {
     useEffect(() => {
         getExams();
         loadCourseData();
-    }, [courseId]);
+    }, [courseId, loadCourseData, getExams]);
 
     const loadCourseData = async () => {
         try {
@@ -44,7 +44,7 @@ const Course = () => {
     async function getExams() {
         try {
             setApiLoading(true);
-            
+
             // Check cache first
             const cachedData = getCachedExams(courseId);
             if (cachedData) {
@@ -52,14 +52,14 @@ const Course = () => {
                 setApiLoading(false);
                 return;
             }
-            
+
             // Fetch from API if not cached or expired
             console.log(`Fetching exam conflicts for course code ${courseId}`);
             const data = await getExamsApi(courseId);
-            
+
             // Cache the data
             cacheExams(courseId, data);
-            
+
             setExamConflicts(data);
         } catch (error) {
             console.error('Error fetching exam conflicts:', error);
