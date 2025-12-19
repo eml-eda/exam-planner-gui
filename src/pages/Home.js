@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import './Home.css';
-import { getCourses } from '../utils/database';
+import { initializeCourses } from '../utils/database';
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
@@ -15,17 +15,14 @@ const Home = () => {
     const [settingsHover, setSettingsHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
-    const [courses, setCourses] = useState(null);
     const [loadingCourses, setLoadingCourses] = useState(true);
 
     useEffect(() => {
         const loadCourses = async () => {
             try {
                 setLoadingCourses(true);
-                const loadedCourses = await getCourses();
-                setCourses(loadedCourses);
+                await initializeCourses();
                 console.log('Courses data loaded');
-                console.table(loadedCourses);
             } catch (error) {
                 console.error('Error preloading courses data:', error);
             } finally {
