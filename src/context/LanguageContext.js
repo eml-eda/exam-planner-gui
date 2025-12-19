@@ -6,17 +6,24 @@ const LanguageContext = createContext();
 // Translation object
 const translations = {
     // Navigation
+    loading_courses: { en: 'Loading Database..', it: 'Caricamento Database...' },
     home: { en: 'Home', it: 'Home' },
     back: { en: 'Back', it: 'Indietro' },
     config: { en: 'Config', it: 'Configurazione' },
     settings: { en: 'Settings', it: 'Impostazioni' },
 
     // Search
+    wait_courses: { en: 'Please wait, loading courses...', it: 'Attendere, caricamento corsi...' },
     search: { en: 'Search for Docente, Course, ....', it: 'Cerca Docente, Corso, ....' },
     foundCourses: { en: 'Found Courses:', it: 'Corsi Trovati:' },
 
     // Course info
     courseInfo: { en: 'Course Info', it: 'Info Corso' },
+    courseCode: { en: 'Course Code', it: 'Codice Corso' },
+    activeStudents: { en: 'Active Students', it: 'Studenti Attivi' },
+    newStudents: { en: 'New Students', it: 'Studenti Nuovi' },
+    instructors: { en: 'Instructors', it: 'Docenti' },
+    courseInstances: { en: 'Course Instances', it: 'Istanze del Corso' },
     courseExams: { en: 'Course Exams', it: 'Esami del Corso' },
     name: { en: 'Name', it: 'Nome' },
     professor: { en: 'Professor', it: 'Professore' },
