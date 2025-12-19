@@ -23,50 +23,51 @@ const Course = () => {
     const [examConflicts, setExamConflicts] = useState([]);
 
     useEffect(() => {
+        const loadCourseData = async () => {
+            try {
+                setLoading(true);
+                const courseData = await getCourseById(courseId);
+                if (courseData) {
+                    setCourse(courseData);
+                }
+            } catch (error) {
+                console.error('Error loading course data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const getExams = async () => {
+            try {
+                setApiLoading(true);
+
+                // Check cache first
+                const cachedData = getCachedExams(courseId);
+                if (cachedData) {
+                    setExamConflicts(cachedData);
+                    setApiLoading(false);
+                    return;
+                }
+
+                // Fetch from API if not cached or expired
+                console.log(`Fetching exam conflicts for course code ${courseId}`);
+                const data = await getExamsApi(courseId);
+
+                // Cache the data
+                cacheExams(courseId, data);
+
+                setExamConflicts(data);
+            } catch (error) {
+                console.error('Error fetching exam conflicts:', error);
+            } finally {
+                setApiLoading(false);
+            }
+        }
+
+
         getExams();
         loadCourseData();
-    }, [courseId, loadCourseData, getExams]);
-
-    const loadCourseData = async () => {
-        try {
-            setLoading(true);
-            const courseData = await getCourseById(courseId);
-            if (courseData) {
-                setCourse(courseData);
-            }
-        } catch (error) {
-            console.error('Error loading course data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    async function getExams() {
-        try {
-            setApiLoading(true);
-
-            // Check cache first
-            const cachedData = getCachedExams(courseId);
-            if (cachedData) {
-                setExamConflicts(cachedData);
-                setApiLoading(false);
-                return;
-            }
-
-            // Fetch from API if not cached or expired
-            console.log(`Fetching exam conflicts for course code ${courseId}`);
-            const data = await getExamsApi(courseId);
-
-            // Cache the data
-            cacheExams(courseId, data);
-
-            setExamConflicts(data);
-        } catch (error) {
-            console.error('Error fetching exam conflicts:', error);
-        } finally {
-            setApiLoading(false);
-        }
-    }
+    }, [courseId]);
 
 
     const handleBack = () => {
