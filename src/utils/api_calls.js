@@ -27,3 +27,14 @@ export const reloadDatabaseApi = async (year = null, name = null) => {
         throw error;
     }
 };
+
+
+export const getCoursesApi = async () => {
+    try {
+        const response = await axios.get('http://127.0.0.1:8000/courses');
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching courses data:", error);
+        throw error;
+    }
+}
