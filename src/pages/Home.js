@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import './Home.css';
+import { getCourses } from '../utils/database';
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
@@ -14,6 +15,26 @@ const Home = () => {
     const [settingsHover, setSettingsHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
+    const [courses, setCourses] = useState(null);
+    const [loadingCourses, setLoadingCourses] = useState(true);
+
+    useEffect(() => {
+        const loadCourses = async () => {
+            try {
+                setLoadingCourses(true);
+                const loadedCourses = await getCourses();
+                setCourses(loadedCourses);
+                console.log('Courses data loaded');
+                console.table(loadedCourses);
+            } catch (error) {
+                console.error('Error preloading courses data:', error);
+            } finally {
+                setLoadingCourses(false);
+            }
+        };
+
+        loadCourses();
+    }, []);
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -27,21 +48,22 @@ const Home = () => {
         <div className="home-container">
             {/* Top Navigation */}
             <div className="top-nav">
-                {/* Back Button */}
-                {canGoBack && (
-                    <button
-                        className={`nav-btn back-btn ${backHover ? 'expanded' : ''}`}
-                        onMouseEnter={() => setBackHover(true)}
-                        onMouseLeave={() => setBackHover(false)}
-                        onClick={handleBack}
-                    >
-                        <span className="btn-icon">←</span>
-                        <span className="btn-text">{t('back')}</span>
-                    </button>
-                )}
+                {/* Left side buttons */}
+                <div className="nav-left">
+                    {/* Back Button */}
+                    {canGoBack && (
+                        <button
+                            className={`nav-btn back-btn ${backHover ? 'expanded' : ''}`}
+                            onMouseEnter={() => setBackHover(true)}
+                            onMouseLeave={() => setBackHover(false)}
+                            onClick={handleBack}
+                        >
+                            <span className="btn-icon">←</span>
+                            <span className="btn-text">{t('back')}</span>
+                        </button>
+                    )}
 
-                {/* Right side buttons */}
-                <div className="nav-right">
+
                     {/* Language Toggle */}
                     <button
                         className="nav-btn language-btn"
@@ -61,12 +83,24 @@ const Home = () => {
                         <span className="btn-text">{t('config')}</span>
                     </button>
                 </div>
+
+                {/* Right side buttons */}
+                <div className="nav-right">
+                    {/* Loading Indicator */}
+                    {loadingCourses && (
+                        <div className="loading-indicator">
+                            <span className="loading-icon">⟳</span>
+                            <span className="loading-text">{t('loading_courses')}</span>
+                        </div>
+                    )}
+
+                </div>
             </div>
 
             {/* Main Content */}
             <div className="main-content">
                 <div className={`search-container ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { if (!locked) setSearching(false) }}>
-                    <SearchComponent setlocked={setlocked} />
+                    <SearchComponent setlocked={setlocked} isDisabled={loadingCourses} />
                 </div>
             </div>
 
