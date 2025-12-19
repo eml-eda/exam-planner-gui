@@ -157,6 +157,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 13px;
+    margin: 0px;
+}
+
+.exam-conflicts {
+    font-size: 12px;
+    margin: 0px;
 }
 
 /* Tooltip */

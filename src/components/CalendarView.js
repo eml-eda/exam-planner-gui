@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './CalendarView.css';
 
 const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
     const { t } = useLanguage();
+    const navigate = useNavigate();
     const [dateRange, setDateRange] = useState({ start: '2026-01-12', end: '2026-02-21' });
     const [hoveredExam, setHoveredExam] = useState(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const containerRef = React.useRef(null);
+
+    const handleExamClick = (exam) => {
+        if (exam.course_code !== courseId) {
+            navigate(`/course/${exam.course_code}`);
+        }
+    };
 
     useEffect(() => {
         // Calculate date range from examConflicts data
@@ -85,12 +93,12 @@ const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
         if (!conflict) return 'neutral';
 
         // High priority conflicts
-        if (conflict.same_year && conflict.same_semester && conflict.all > 0) {
+        if (conflict.all > 0 && conflict.same_semester) {
             return 'conflict-major'; // Red - same year and semester with conflicts
         }
 
         // Medium priority conflicts
-        if (conflict.all > 0) {
+        if (conflict.all > 0 && conflict.same_year) {
             return 'conflict-minor'; // Yellow - has conflicts
         }
 
@@ -162,15 +170,17 @@ const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
                                                             <div
                                                                 key={examIndex}
                                                                 className={`exam-item ${getExamColor(exam)}`}
+                                                                onClick={() => handleExamClick(exam)}
                                                                 onMouseEnter={() => setHoveredExam(exam)}
                                                                 onMouseLeave={() => setHoveredExam(null)}
+                                                                style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
                                                             >
                                                                 <p className="exam-code">
                                                                     {exam.course_code}
                                                                 </p>
                                                                 {exam.conflict_info && exam.conflict_info.all > 0 && (
-                                                                    <p className="exam-conflicts">
-                                                                        ({exam.conflict_info.all})
+                                                                    <p className="exam-conflicts exam-code">
+                                                                        ({exam.conflict_info.all} - {exam.conflict_info.new})
                                                                     </p>
                                                                 )}
                                                             </div>
@@ -188,7 +198,7 @@ const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
             </div>
 
             {/* Exam tooltip */}
-            {hoveredExam && (
+            {hoveredExam && hoveredExam.course_code !== courseId && (
                 <div
                     className="exam-tooltip"
                     style={{
