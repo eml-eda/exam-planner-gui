@@ -1,43 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getExamsInDateRange, getCourseIdFromExam } from '../utils/database';
 import './CalendarView.css';
 
-const CalendarView = ({ courseId, courseName, exams = [] }) => {
+const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
     const { t } = useLanguage();
-    const navigate = useNavigate();
-    const [allExams, setAllExams] = useState([]);
-    const [dateRange, setDateRange] = useState({ start: '2026-01-01', end: '2026-02-28' });
+    const [dateRange, setDateRange] = useState({ start: '2026-01-12', end: '2026-02-21' });
     const [hoveredExam, setHoveredExam] = useState(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const containerRef = React.useRef(null);
 
     useEffect(() => {
-        // Load date range from localStorage if available
-        const savedRange = localStorage.getItem('examDateRange');
-        if (savedRange) {
-            try {
-                const parsed = JSON.parse(savedRange);
-                setDateRange({ start: parsed.startDate, end: parsed.endDate });
-            } catch (error) {
-                console.error('Error parsing saved date range:', error);
-            }
+        // Calculate date range from examConflicts data
+        if (examConflicts.length > 0) {
+            const dates = examConflicts.map(ec => ec.date).sort();
+            const startDate = dates[0];
+            const endDate = dates[dates.length - 1];
+            setDateRange({ start: startDate, end: endDate });
         }
-    }, []);
-
-    useEffect(() => {
-        const loadAllExams = async () => {
-            try {
-                const allExamData = await getExamsInDateRange(dateRange.start, dateRange.end);
-                setAllExams(allExamData);
-            } catch (error) {
-                console.error('Error loading exam data:', error);
-            }
-        };
-
-        loadAllExams();
-    }, [dateRange]);
+    }, [examConflicts]);
 
     useEffect(() => {
         const handleMouseMove = (e) => {
@@ -91,42 +71,30 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
     // Get exams for a specific date
     const getExamsForDate = (date) => {
         const dateStr = date.toISOString().split('T')[0];
-        return allExams.filter(exam => exam.date === dateStr);
+        const dateExams = examConflicts.find(ec => ec.date === dateStr);
+        return dateExams ? dateExams.exams : [];
     };
 
-    // Determine exam color based on relationship to current course
+    // Determine exam color based on conflict info
     const getExamColor = (exam) => {
-        if (exam.course_name === courseName) {
-            return 'current-course'; // Green
+        if (exam.course_code === courseId) {
+            return 'current-course'; // Green - this is the course being viewed
         }
 
-        // Check for conflicts (±1 day)
-        const examDate = new Date(exam.date);
-        const courseExamDates = exams.map(e => new Date(e.date));
+        const conflict = exam.conflict_info;
+        if (!conflict) return 'neutral';
 
-        for (const courseDate of courseExamDates) {
-            const dayDiff = Math.abs((examDate - courseDate) / (1000 * 60 * 60 * 24));
-            if (dayDiff === 1) {
-                return 'conflict-minor'; // Yellow
-            }
-            if (dayDiff === 2) {
-                return 'conflict-major'; // Red
-            }
+        // High priority conflicts
+        if (conflict.same_year && conflict.same_semester && conflict.all > 0) {
+            return 'conflict-major'; // Red - same year and semester with conflicts
         }
 
-        return 'neutral'; // White/neutral
-    };
-
-    const handleExamClick = (exam) => {
-        if (exam.course_name !== courseName) {
-            // Get the course ID by traversing semester_exam_name_id -> exam_name -> course_name
-            const courseId = getCourseIdFromExam(exam);
-            if (courseId) {
-                navigate(`/course/${courseId}`);
-            } else {
-                console.error('Could not find course ID for exam:', exam);
-            }
+        // Medium priority conflicts
+        if (conflict.all > 0) {
+            return 'conflict-minor'; // Yellow - has conflicts
         }
+
+        return 'neutral'; // White/neutral - no conflicts
     };
 
     const formatDay = (dayIndex) => {
@@ -194,16 +162,17 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
                                                             <div
                                                                 key={examIndex}
                                                                 className={`exam-item ${getExamColor(exam)}`}
-                                                                onClick={() => handleExamClick(exam)}
                                                                 onMouseEnter={() => setHoveredExam(exam)}
                                                                 onMouseLeave={() => setHoveredExam(null)}
                                                             >
                                                                 <p className="exam-code">
                                                                     {exam.course_code}
                                                                 </p>
-                                                                <p className="exam-code">
-                                                                    ({exam.registered_students_num} / {exam.registered_students_num})
-                                                                </p>
+                                                                {exam.conflict_info && exam.conflict_info.all > 0 && (
+                                                                    <p className="exam-conflicts">
+                                                                        ({exam.conflict_info.all})
+                                                                    </p>
+                                                                )}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -228,14 +197,25 @@ const CalendarView = ({ courseId, courseName, exams = [] }) => {
                     }}
                 >
                     <div className="tooltip-header">
-                        <strong>{hoveredExam.course_name}</strong>
+                        <strong>{hoveredExam.course_code}</strong>
                     </div>
                     <div className="tooltip-details">
-                        <div>Code: {hoveredExam.course_code}</div>
-                        <div>Professor: {hoveredExam.professor_name}</div>
-                        <div>Time: {hoveredExam.start_time} - {hoveredExam.end_time}</div>
-                        <div>Total Students: {hoveredExam.registered_students_num}</div>
-                        <div>New Students: {hoveredExam.registered_students_num}</div>
+                        <div>Type: {hoveredExam.exam_type}</div>
+                        {hoveredExam.start_time && hoveredExam.end_time && (
+                            <div>Time: {hoveredExam.start_time} - {hoveredExam.end_time}</div>
+                        )}
+                        {hoveredExam.conflict_info && (
+                            <>
+                                <div>Total Conflicts: {hoveredExam.conflict_info.all}</div>
+                                <div>New Students Conflicts: {hoveredExam.conflict_info.new}</div>
+                                {hoveredExam.conflict_info.same_semester && (
+                                    <div className="warning">⚠️ Same Semester</div>
+                                )}
+                                {hoveredExam.conflict_info.same_year && (
+                                    <div className="warning">⚠️ Same Year</div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
             )}
