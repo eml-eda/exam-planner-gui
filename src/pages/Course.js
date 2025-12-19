@@ -6,7 +6,7 @@ import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
-import { getExamConflicts } from '../utils/api_calls';
+import { getExamsApi } from '../utils/api_calls';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -25,7 +25,7 @@ const Course = () => {
     const [examConflicts, setExamConflicts] = useState([]);
 
     useEffect(() => {
-        getConflictExams();
+        getExams();
         loadCourseData();
     }, [courseId]);
 
@@ -47,11 +47,11 @@ const Course = () => {
         }
     };
 
-    async function getConflictExams() {
+    async function getExams() {
         try {
             setApiLoading(true);
             console.log("Fetching exam conflicts for course code 06LSLLM");
-            const data = await getExamConflicts("06LSLLM");
+            const data = await getExamsApi("06LSLLM");
             console.table(data);
             setExamConflicts(data);
         } catch (error) {
