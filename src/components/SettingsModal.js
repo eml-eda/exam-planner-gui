@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { reloadDatabaseApi } from '../utils/api_calls';
 import './SettingsModal.css';
 
 const SettingsModal = ({ onClose }) => {
     const { t } = useLanguage();
-    const [startDate, setStartDate] = useState('2026-01-01');
-    const [endDate, setEndDate] = useState('2026-02-28');
+    const [year, setYear] = useState('2026');
+    const [sessionName, setSessionName] = useState('winter');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
-    const handleSave = () => {
-        // Save settings to localStorage or context
-        localStorage.setItem('examDateRange', JSON.stringify({
-            startDate,
-            endDate
-        }));
-        onClose();
+    const handleSave = async () => {
+        // Reload database with selected year and session
+        setIsLoading(true);
+        setError(null);
+        setSuccessMessage(null);
+
+        try {
+            const response = await reloadDatabaseApi(parseInt(year), sessionName);
+            setSuccessMessage(response.message || 'Database reloaded successfully');
+            setTimeout(() => {
+                onClose();
+            }, 1500);
+        } catch (err) {
+            setError(err.response?.data?.detail || 'Failed to reload database');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleOverlayClick = (e) => {
@@ -32,36 +46,57 @@ const SettingsModal = ({ onClose }) => {
 
                 <div className="modal-body">
                     <div className="setting-group">
-                        <h3>{t('examDateRange')}</h3>
+                        <h3>Exam Session Configuration</h3>
                         <div className="date-inputs">
                             <div className="input-group">
-                                <label>{t('startDate')}</label>
-                                <input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
+                                <label>Year</label>
+                                <select
+                                    value={year}
+                                    onChange={(e) => setYear(e.target.value)}
                                     className="date-input"
-                                />
+                                    disabled={isLoading}
+                                >
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
                             </div>
                             <div className="input-group">
-                                <label>{t('endDate')}</label>
-                                <input
-                                    type="date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
+                                <label>Session Name</label>
+                                <select
+                                    value={sessionName}
+                                    onChange={(e) => setSessionName(e.target.value)}
                                     className="date-input"
-                                />
+                                    disabled={isLoading}
+                                >
+                                    <option value="winter">Winter</option>
+                                    <option value="spring-bachelor">Spring Bachelor</option>
+                                    <option value="summer">Summer</option>
+                                    <option value="autumn">Autumn</option>
+                                    <option value="autumn-bachelor">Autumn Bachelor</option>
+                                </select>
                             </div>
                         </div>
                     </div>
+
+                    {error && (
+                        <div className="message error-message">
+                            {error}
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="message success-message">
+                            {successMessage}
+                        </div>
+                    )}
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn btn-secondary" onClick={onClose}>
+                    <button className="btn btn-secondary" onClick={onClose} disabled={isLoading}>
                         {t('cancel')}
                     </button>
-                    <button className="btn btn-primary" onClick={handleSave}>
-                        {t('save')}
+                    <button className="btn btn-primary" onClick={handleSave} disabled={isLoading}>
+                        {isLoading ? 'Loading...' : t('save')}
                     </button>
                 </div>
             </div>
