@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
-import { initializeDatabase } from './utils/database';
 import Home from './pages/Home';
 import Course from './pages/Course';
 import './index.css';
+
+const SESSION_CONFIG_KEY = 'exam-session-config';
 
 function App() {
     const [databaseReady, setDatabaseReady] = useState(false);
@@ -12,21 +13,19 @@ function App() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const initDb = async () => {
-            try {
-                setLoading(true);
-                await initializeDatabase();
-                setDatabaseReady(true);
-                setError(null);
-            } catch (err) {
-                console.error('Failed to initialize database:', err);
-                setError('Failed to load application data. Please refresh the page.');
-            } finally {
-                setLoading(false);
+        // Initialize session config with defaults if not exists
+        const initializeSessionConfig = () => {
+            const saved = localStorage.getItem(SESSION_CONFIG_KEY);
+            if (!saved) {
+                const defaultConfig = { year: 2026, sessionName: 'Winter' };
+                localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(defaultConfig));
+                console.log('Initialized default session config:', defaultConfig);
             }
         };
 
-        initDb();
+        initializeSessionConfig();
+        setDatabaseReady(true);
+        setLoading(false);
     }, []);
 
     if (loading) {
