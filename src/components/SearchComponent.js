@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { searchCourses, getCourseInstances } from '../utils/database';
+import { searchCourses } from '../utils/database';
 import './SearchComponent.css';
 
-const SearchComponent = ({ setlocked }) => {
+const SearchComponent = ({ setlocked, isDisabled }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
@@ -39,19 +39,9 @@ const SearchComponent = ({ setlocked }) => {
         setIsLoading(true);
         try {
             const searchResults = await searchCourses(searchQuery);
-            // Enrich results with course instances (professors)
-            const enrichedResults = await Promise.all(
-                searchResults.map(async (course) => {
-                    const instances = await getCourseInstances(course.course_code);
-                    return {
-                        ...course,
-                        professors: instances.map(inst => inst.professor_name)
-                    };
-                })
-            );
-            setResults(enrichedResults);
-            setShowResults(enrichedResults.length > 0);
-            setlocked?.(enrichedResults.length > 0);
+            setResults(searchResults);
+            setShowResults(searchResults.length > 0);
+            setlocked?.(searchResults.length > 0);
         } catch (error) {
             console.error('Search error:', error);
             setResults([]);
@@ -97,7 +87,7 @@ const SearchComponent = ({ setlocked }) => {
         setQuery('');
         setShowResults(false);
         setlocked?.(false);
-        navigate(`/course/${course.id}`);
+        navigate(`/course/${course.code}`);
     };
 
     const highlightMatch = (text, query) => {
@@ -119,10 +109,11 @@ const SearchComponent = ({ setlocked }) => {
                     ref={inputRef}
                     type="text"
                     className="search-input"
-                    placeholder={t('search')}
+                    placeholder={isDisabled ? t('wait_courses') : t('search')}
                     value={query}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
+                    disabled={isDisabled}
                 />
                 <div className="search-icon">
                     {isLoading ? (
@@ -144,51 +135,42 @@ const SearchComponent = ({ setlocked }) => {
                     <div className="results-list">
                         {results.map((course, index) => (
                             <div
-                                key={course.id}
+                                key={course.code}
                                 className={`result-item ${index % 2 === 0 ? 'even' : 'odd'}`}
                                 onClick={() => handleCourseClick(course)}
                             >
                                 <div className="result-main">
                                     <div className="course-info">
                                         <h4 className="course-name">
-                                            {highlightMatch(course.course_name, query)}
+                                            {highlightMatch(course.title, query)}
                                         </h4>
                                         <div className="course-details">
                                             <span className="course-code">
-                                                {highlightMatch(course.course_code, query)}
+                                                {highlightMatch(course.code, query)}
                                             </span>
-                                            {course.professors && course.professors.length > 0 && (
+                                            {course.instructors && course.instructors.length > 0 && (
                                                 <>
                                                     <span className="separator">•</span>
                                                     <span className="professor-name">
-                                                        {course.professors.map((prof, i) => (
-                                                            <span key={i}>
-                                                                {highlightMatch(prof, query)}
-                                                                {i < course.professors.length - 1 ? ', ' : ''}
+                                                        {course.instructors.map((instructor, i) => (
+                                                            <span key={instructor.id}>
+                                                                {highlightMatch(instructor.name, query)}
+                                                                {i < course.instructors.length - 1 ? ', ' : ''}
                                                             </span>
                                                         ))}
                                                     </span>
                                                 </>
                                             )}
-                                            {course.credits && (
+                                            {course.students_active && (
                                                 <>
                                                     <span className="separator">•</span>
-                                                    <span className="credits">{course.credits} {t('credits')}</span>
+                                                    <span className="students">{course.students_active} {t('students')}</span>
                                                 </>
                                             )}
                                         </div>
                                     </div>
                                     <div className="result-arrow">→</div>
                                 </div>
-
-                                {course.description && (
-                                    <div className="course-description">
-                                        {course.description.length > 100
-                                            ? `${course.description.substring(0, 100)}...`
-                                            : course.description
-                                        }
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
