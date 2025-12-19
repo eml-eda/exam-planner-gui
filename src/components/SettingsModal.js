@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { reloadDatabaseApi } from '../utils/api_calls';
-import { refreshCoursesFromApi } from '../utils/database';
+import { refreshCoursesFromApi, clearAllExamCaches } from '../utils/database';
 import './SettingsModal.css';
 
 
@@ -81,6 +81,10 @@ const SettingsModal = ({ onClose }) => {
 
         try {
             await refreshCoursesFromApi();
+
+            // Clear all exam caches
+            clearAllExamCaches();
+
             setSuccessMessage('Courses refreshed successfully');
             setTimeout(() => {
                 navigate('/');

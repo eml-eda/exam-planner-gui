@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getCourseById } from '../utils/database';
+import { getCourseById, getCachedExams, cacheExams } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
@@ -44,9 +44,22 @@ const Course = () => {
     async function getExams() {
         try {
             setApiLoading(true);
+            
+            // Check cache first
+            const cachedData = getCachedExams(courseId);
+            if (cachedData) {
+                setExamConflicts(cachedData);
+                setApiLoading(false);
+                return;
+            }
+            
+            // Fetch from API if not cached or expired
             console.log(`Fetching exam conflicts for course code ${courseId}`);
             const data = await getExamsApi(courseId);
-            console.table(data);
+            
+            // Cache the data
+            cacheExams(courseId, data);
+            
             setExamConflicts(data);
         } catch (error) {
             console.error('Error fetching exam conflicts:', error);
