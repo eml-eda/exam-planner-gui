@@ -21,6 +21,7 @@ const Course = () => {
     const [showInfo, setShowInfo] = useState(true);
     const [apiLoading, setApiLoading] = useState(true);
     const [examConflicts, setExamConflicts] = useState([]);
+    const [backendError, setBackendError] = useState(false);
 
     useEffect(() => {
         const loadCourseData = async () => {
@@ -31,6 +32,7 @@ const Course = () => {
                     setCourse(courseData);
                 }
             } catch (error) {
+                setBackendError(true);
                 console.error('Error loading course data:', error);
             } finally {
                 setLoading(false);
@@ -58,6 +60,7 @@ const Course = () => {
 
                 setExamConflicts(data);
             } catch (error) {
+                setBackendError(true);
                 console.error('Error fetching exam conflicts:', error);
             } finally {
                 setApiLoading(false);
@@ -257,6 +260,19 @@ const Course = () => {
                 <SettingsModal
                     onClose={() => setShowSettings(false)}
                 />
+            )}
+
+            {/* Backend Error Modal */}
+            {backendError && (
+                <div className="error-modal-overlay">
+                    <div className="error-modal">
+                        <div className="error-icon">⚠️</div>
+                        <h2 className="error-title">{t('error')}</h2>
+                        <p className="error-message">
+                            {t('backend_error_message')}
+                        </p>
+                    </div>
+                </div>
             )}
         </div>
     );

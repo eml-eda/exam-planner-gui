@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import './Home.css';
-import { initializeCourses } from '../utils/database';
+import { initializeCourses, clearCoursesCache } from '../utils/database';
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
@@ -16,14 +16,17 @@ const Home = () => {
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
     const [loadingCourses, setLoadingCourses] = useState(true);
+    const [backendError, setBackendError] = useState(false);
 
     useEffect(() => {
+        clearCoursesCache();
         const loadCourses = async () => {
             try {
                 setLoadingCourses(true);
                 await initializeCourses();
                 console.log('Courses data loaded');
             } catch (error) {
+                setBackendError(true);
                 console.error('Error preloading courses data:', error);
             } finally {
                 setLoadingCourses(false);
@@ -106,6 +109,19 @@ const Home = () => {
                 <SettingsModal
                     onClose={() => setShowSettings(false)}
                 />
+            )}
+
+            {/* Backend Error Modal */}
+            {backendError && (
+                <div className="error-modal-overlay">
+                    <div className="error-modal">
+                        <div className="error-icon">⚠️</div>
+                        <h2 className="error-title">{t('error')}</h2>
+                        <p className="error-message">
+                            {t('backend_error_message')}
+                        </p>
+                    </div>
+                </div>
             )}
         </div>
     );

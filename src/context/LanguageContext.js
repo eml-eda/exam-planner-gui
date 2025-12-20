@@ -73,7 +73,14 @@ const translations = {
 
     // Languages
     english: { en: 'ENG', it: 'ENG' },
-    italian: { en: 'IT', it: 'IT' }
+    italian: { en: 'IT', it: 'IT' },
+
+    // Error messages
+    error: { en: 'Error', it: 'Errore' },
+    backend_error_message: {
+        en: 'Unable to load course data. Please check your server availability and refresh the page.',
+        it: 'Impossibile caricare i dati dei corsi. Si prega di verificare la disponibilità del server e aggiornare la pagina.'
+    }
 };
 
 // Language provider component
