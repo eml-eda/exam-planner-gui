@@ -19,7 +19,7 @@ const Home = () => {
     const [backendError, setBackendError] = useState(false);
 
     useEffect(() => {
-        clearCoursesCache();
+        // clearCoursesCache();    // Uncomment for restarting course cache 
         const loadCourses = async () => {
             try {
                 setLoadingCourses(true);
