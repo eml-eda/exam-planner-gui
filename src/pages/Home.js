@@ -4,7 +4,8 @@ import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import './Home.css';
-import { initializeCourses, clearCoursesCache } from '../utils/database';
+import { initializeCourses } from '../utils/database';
+// import { clearCoursesCache } from '../utils/database';    // Uncomment for restarting course cache 
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
