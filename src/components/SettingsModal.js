@@ -8,28 +8,6 @@ import './SettingsModal.css';
 
 const SESSION_CONFIG_KEY = 'exam-session-config';
 
-// Get config from localStorage or return defaults
-const getSessionConfig = () => {
-    try {
-        const saved = localStorage.getItem(SESSION_CONFIG_KEY);
-        if (saved) {
-            return JSON.parse(saved);
-        }
-    } catch (error) {
-        console.error('Error reading session config from localStorage:', error);
-    }
-    return { year: 2026, sessionName: 'Winter' };
-};
-
-// Save config to localStorage
-const saveSessionConfig = (year, sessionName) => {
-    try {
-        localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({ year, sessionName }));
-    } catch (error) {
-        console.error('Error saving session config to localStorage:', error);
-    }
-};
-
 const SettingsModal = ({ onClose }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
@@ -42,12 +20,33 @@ const SettingsModal = ({ onClose }) => {
 
     // Load config from localStorage on mount
     useEffect(() => {
+        const getSessionConfig = () => {
+            try {
+                const saved = localStorage.getItem(SESSION_CONFIG_KEY);
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+            } catch (error) {
+                console.error('Error reading session config from localStorage:', error);
+            }
+            return { year: 2026, sessionName: 'Winter' };
+        };
+
         const config = getSessionConfig();
         setYear(config.year);
         setSessionName(config.sessionName);
     }, []);
 
     const handleSave = async () => {
+        // Save config to localStorage
+        const saveSessionConfig = (year, sessionName) => {
+            try {
+                localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({ year, sessionName }));
+            } catch (error) {
+                console.error('Error saving session config to localStorage:', error);
+            }
+        };
+
         // Reload database with selected year and session
         setIsLoading(true);
         setError(null);
