@@ -191,5 +191,4 @@ const SettingsModal = ({ onClose }) => {
     );
 };
 
-export { getSessionConfig, saveSessionConfig };
 export default SettingsModal;
