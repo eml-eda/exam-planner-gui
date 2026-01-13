@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { reloadDatabaseApi } from '../utils/api_calls';
-import { refreshCoursesFromApi, clearAllExamCaches } from '../utils/database';
 import './SettingsModal.css';
 
 
@@ -14,7 +13,6 @@ const SettingsModal = ({ onClose }) => {
     const [year, setYear] = useState('2026');
     const [sessionName, setSessionName] = useState('winter');
     const [isLoading, setIsLoading] = useState(false);
-    const [isRefreshingCourses, setIsRefreshingCourses] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
@@ -29,7 +27,7 @@ const SettingsModal = ({ onClose }) => {
             } catch (error) {
                 console.error('Error reading session config from localStorage:', error);
             }
-            return { year: 2026, sessionName: 'Winter' };
+            return { year: 2026, sessionName: 'winter' };
         };
 
         const config = getSessionConfig();
@@ -60,8 +58,6 @@ const SettingsModal = ({ onClose }) => {
 
             setSuccessMessage(response.message || 'Database reloaded successfully');
 
-            await refreshCoursesFromApi();
-
             setTimeout(() => {
                 navigate('/');
                 window.location.reload();
@@ -73,34 +69,13 @@ const SettingsModal = ({ onClose }) => {
         }
     };
 
-    const handleRefreshCourses = async () => {
-        setIsRefreshingCourses(true);
-        setError(null);
-        setSuccessMessage(null);
-
-        try {
-            await refreshCoursesFromApi();
-
-            // Clear all exam caches
-            clearAllExamCaches();
-
-            setSuccessMessage('Courses refreshed successfully');
-            setTimeout(() => {
-                navigate('/');
-                window.location.reload();
-            }, 500);
-        } catch (err) {
-            setError('Failed to refresh courses');
-        } finally {
-            setIsRefreshingCourses(false);
-        }
-    };
 
     const handleOverlayClick = (e) => {
-        if (e.target === e.currentTarget && !isRefreshingCourses && !isLoading) {
+        if (e.target === e.currentTarget && !isLoading) {
             onClose();
         }
     };
+
 
     return (
         <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -110,7 +85,7 @@ const SettingsModal = ({ onClose }) => {
                     <button
                         className="close-btn"
                         onClick={onClose}
-                        disabled={isRefreshingCourses || isLoading}
+                        disabled={isLoading}
                     >
                         ×
                     </button>
@@ -150,18 +125,8 @@ const SettingsModal = ({ onClose }) => {
                         </div>
                     </div>
 
-                    <div className="setting-group">
-                        <h3>Courses Cache</h3>
-                        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                            Refresh courses data from the server
-                        </p>
-                        <button
-                            className="btn btn-refresh"
-                            onClick={handleRefreshCourses}
-                            disabled={isRefreshingCourses || isLoading}
-                        >
-                            {isRefreshingCourses ? '🔄 Refreshing...' : '🔄 Refresh Courses'}
-                        </button>
+                    <div className="message warning-message">
+                        ⚠️ Saving will reload backend server. Ensure no other users are active.
                     </div>
 
                     {error && (
@@ -173,16 +138,20 @@ const SettingsModal = ({ onClose }) => {
                     {successMessage && (
                         <div className="message success-message">
                             {successMessage}
-                            <p>Now Reloading the courses....</p>
+                            <p>Now Reloading the back-end....</p>
                         </div>
                     )}
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn btn-secondary" onClick={onClose} disabled={isLoading || isRefreshingCourses}>
+                    <button className="btn btn-secondary" onClick={onClose} disabled={isLoading}>
                         {t('cancel')}
                     </button>
-                    <button className="btn btn-primary" onClick={handleSave} disabled={isLoading}>
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleSave}
+                        disabled={isLoading}
+                    >
                         {isLoading ? 'Loading...' : t('save')}
                     </button>
                 </div>

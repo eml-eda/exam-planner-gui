@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { getCourseById, getCachedExams, cacheExams } from '../utils/database';
+import { getCourseById } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
@@ -22,6 +22,7 @@ const Course = () => {
     const [apiLoading, setApiLoading] = useState(true);
     const [examConflicts, setExamConflicts] = useState([]);
     const [backendError, setBackendError] = useState(false);
+    const [fetchType, setFetchType] = useState(null);
 
     useEffect(() => {
         const loadCourseData = async () => {
@@ -43,22 +44,16 @@ const Course = () => {
             try {
                 setApiLoading(true);
 
-                // Check cache first
-                const cachedData = getCachedExams(courseId);
-                if (cachedData) {
-                    setExamConflicts(cachedData);
-                    setApiLoading(false);
-                    return;
-                }
-
-                // Fetch from API if not cached or expired
+                // Fetch from API (backend handles caching)
                 console.log(`Fetching exam conflicts for course code ${courseId}`);
-                const data = await getExamsApi(courseId);
+                const response = await getExamsApi(courseId);
 
-                // Cache the data
-                cacheExams(courseId, data);
+                // Extract exams and fetch_type from response
+                const data = response.exams || [];
+                const fetchTypeValue = response.fetch_type || 'unknown';
 
                 setExamConflicts(data);
+                setFetchType(fetchTypeValue);
             } catch (error) {
                 setBackendError(true);
                 console.error('Error fetching exam conflicts:', error);
@@ -154,6 +149,16 @@ const Course = () => {
                             onClick={() => setShowExams(!showExams)}
                         >
                             <h2>{t('courseExams')}</h2>
+                            {fetchType && (
+                                <div
+                                    className={`fetch-indicator ${fetchType}`}
+                                    title={fetchType === 'from-cache' ? 'Data from cache' : 'Freshly queried data'}
+                                >
+                                    <span className="fetch-tooltip">
+                                        {fetchType === 'from-cache' ? '📦 Cached' : '🔄 Fresh'}
+                                    </span>
+                                </div>
+                            )}
                             <span className={`expand-icon ${showExams ? 'rotated' : ''}`}>▼</span>
                         </button>
 
