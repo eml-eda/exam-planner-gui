@@ -41,3 +41,13 @@ export const getCoursesApi = async () => {
         throw error;
     }
 }
+
+export const getConfigApi = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/config`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching courses data:", error);
+        throw error;
+    }
+}
