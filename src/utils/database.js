@@ -4,8 +4,9 @@ let courses = null;
 // Function to initialize courses from back-end API
 export const initializeCourses = async () => {
     console.log('Fetching courses from API...');
-    courses = await getCoursesApi();
-    return courses;
+    const response = await getCoursesApi();
+    courses = response.courses.result;
+    return response;
 }
 
 // Function to search courses
