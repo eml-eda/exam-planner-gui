@@ -13,6 +13,18 @@ const Course = () => {
     const navigate = useNavigate();
     const { isEnglish, toggleLanguage, t } = useLanguage();
     const [course, setCourse] = useState(null);
+
+    // Format timestamp from ISO format to "HH:MM:SS DD/MM"
+    const formatTimestamp = (timestamp) => {
+        if (!timestamp) return null;
+        const date = new Date(timestamp);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds} ${day}/${month}`;
+    };
     const [loading, setLoading] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
@@ -23,6 +35,7 @@ const Course = () => {
     const [examConflicts, setExamConflicts] = useState([]);
     const [backendError, setBackendError] = useState(false);
     const [fetchType, setFetchType] = useState(null);
+    const [fetchTime, setFetchTime] = useState(null);
 
     useEffect(() => {
         const loadCourseData = async () => {
@@ -49,11 +62,13 @@ const Course = () => {
                 const response = await getExamsApi(courseId);
 
                 // Extract exams and fetch_type from response
-                const data = response.exams || [];
+                const data = response.exams.result || [];
+                const fetchTimeValue = response.exams.timestamp || null;
                 const fetchTypeValue = response.fetch_type || 'unknown';
 
                 setExamConflicts(data);
                 setFetchType(fetchTypeValue);
+                setFetchTime(fetchTimeValue);
             } catch (error) {
                 setBackendError(true);
                 console.error('Error fetching exam conflicts:', error);
@@ -149,13 +164,14 @@ const Course = () => {
                             onClick={() => setShowExams(!showExams)}
                         >
                             <h2>{t('courseExams')}</h2>
-                            {fetchType && (
+                            {!apiLoading && fetchType && (
                                 <div
                                     className={`fetch-indicator ${fetchType}`}
-                                    title={fetchType === 'from-cache' ? 'Data from cache' : 'Freshly queried data'}
+                                    title={fetchType === 'from-cache' ? t('exams') + ' ' + t('dataFromCache') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '') : t('exams') + ' ' + t('freshlyQueriedData') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '')}
                                 >
                                     <span className="fetch-tooltip">
-                                        {fetchType === 'from-cache' ? '📦 Cached' : '🔄 Fresh'}
+                                        {fetchType === 'from-cache' ? t('exams') + ' ' + t('cached') : t('exams') + ' ' + t('fresh')}
+                                        {fetchTime && <><br />{formatTimestamp(fetchTime)}</>}
                                     </span>
                                 </div>
                             )}
@@ -166,7 +182,7 @@ const Course = () => {
                             <div className="section-content">
                                 {apiLoading ? (
                                     <div className="skeleton-loading">
-                                        <p className="loading-text">Loading Exams Data...</p>
+                                        <p className="loading-text">{t('loadingExams')}</p>
                                         <div className="skeleton-row"></div>
                                         <div className="skeleton-row"></div>
                                         <div className="skeleton-row"></div>
