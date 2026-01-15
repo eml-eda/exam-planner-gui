@@ -11,6 +11,8 @@ const translations = {
     back: { en: 'Back', it: 'Indietro' },
     config: { en: 'Config', it: 'Configurazione' },
     settings: { en: 'Settings', it: 'Impostazioni' },
+    courses: { en: 'Courses', it: 'Corsi' },
+    exams: { en: 'Exams', it: 'Esami' },
 
     // Search
     wait_courses: { en: 'Please wait, loading courses...', it: 'Attendere, caricamento corsi...' },
@@ -25,6 +27,11 @@ const translations = {
     instructors: { en: 'Instructors', it: 'Docenti' },
     courseInstances: { en: 'Course Instances', it: 'Istanze del Corso' },
     courseExams: { en: 'Course Exams', it: 'Esami del Corso' },
+    dataFromCache: { en: 'Data from cache', it: 'Dati dalla cache' },
+    freshlyQueriedData: { en: 'Freshly queried data', it: 'Dati appena interrogati' },
+    cached: { en: 'Cached 📦', it: 'Dalla Cache 📦' },
+    fresh: { en: 'Fresh 🔄', it: 'Appena Interrogati 🔄' },
+    loadingExams: { en: 'Loading Exams Data...', it: 'Caricamento Dati Esami...' },
     name: { en: 'Name', it: 'Nome' },
     professor: { en: 'Professor', it: 'Professore' },
     credits: { en: 'Credits', it: 'Crediti' },
