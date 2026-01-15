@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfig } from '../context/ConfigContext';
 import { reloadDatabaseApi } from '../utils/api_calls';
 import './SettingsModal.css';
 
-
-const SESSION_CONFIG_KEY = 'exam-session-config';
-
 const SettingsModal = ({ onClose }) => {
     const { t } = useLanguage();
+    const { config, updateConfig } = useConfig();
     const navigate = useNavigate();
     const [year, setYear] = useState('2026');
     const [sessionName, setSessionName] = useState('winter');
@@ -16,35 +15,13 @@ const SettingsModal = ({ onClose }) => {
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
-    // Load config from localStorage on mount
+    // Load config from context on mount
     useEffect(() => {
-        const getSessionConfig = () => {
-            try {
-                const saved = localStorage.getItem(SESSION_CONFIG_KEY);
-                if (saved) {
-                    return JSON.parse(saved);
-                }
-            } catch (error) {
-                console.error('Error reading session config from localStorage:', error);
-            }
-            return { year: 2026, sessionName: 'winter' };
-        };
-
-        const config = getSessionConfig();
-        setYear(config.year);
-        setSessionName(config.sessionName);
-    }, []);
+        setYear(config.year.toString());
+        setSessionName(config.name);
+    }, [config]);
 
     const handleSave = async () => {
-        // Save config to localStorage
-        const saveSessionConfig = (year, sessionName) => {
-            try {
-                localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify({ year, sessionName }));
-            } catch (error) {
-                console.error('Error saving session config to localStorage:', error);
-            }
-        };
-
         // Reload database with selected year and session
         setIsLoading(true);
         setError(null);
@@ -53,8 +30,8 @@ const SettingsModal = ({ onClose }) => {
         try {
             const response = await reloadDatabaseApi(parseInt(year), sessionName);
 
-            // Save config to localStorage on success
-            saveSessionConfig(year, sessionName);
+            // Update config context on success
+            updateConfig({ year: parseInt(year), name: sessionName });
 
             setSuccessMessage(response.message || 'Database reloaded successfully');
 
