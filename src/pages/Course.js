@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { getCourseById } from '../utils/database';
@@ -6,7 +6,7 @@ import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
-import { getExamsApi } from '../utils/api_calls';
+import { getExamsApi, clearExamCacheApi } from '../utils/api_calls';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -37,6 +37,42 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
 
+    const getExams = useCallback(async () => {
+        try {
+            setApiLoading(true);
+
+            // Fetch from API (backend handles caching)
+            console.log(`Fetching exam conflicts for course code ${courseId}`);
+            const response = await getExamsApi(courseId);
+
+            // Extract exams and fetch_type from response
+            const data = response.exams.result || [];
+            const fetchTimeValue = response.exams.timestamp || null;
+            const fetchTypeValue = response.fetch_type || 'unknown';
+
+            setExamConflicts(data);
+            setFetchType(fetchTypeValue);
+            setFetchTime(fetchTimeValue);
+        } catch (error) {
+            setBackendError(true);
+            console.error('Error fetching exam conflicts:', error);
+        } finally {
+            setApiLoading(false);
+        }
+    }, [courseId]);
+
+    const handleRefreshExams = async () => {
+        try {
+            setApiLoading(true);
+            await clearExamCacheApi(courseId);
+            await getExams();
+        } catch (error) {
+            setBackendError(true);
+            console.error('Error refreshing exams:', error);
+            setApiLoading(false);
+        }
+    };
+
     useEffect(() => {
         const loadCourseData = async () => {
             try {
@@ -53,34 +89,9 @@ const Course = () => {
             }
         };
 
-        const getExams = async () => {
-            try {
-                setApiLoading(true);
-
-                // Fetch from API (backend handles caching)
-                console.log(`Fetching exam conflicts for course code ${courseId}`);
-                const response = await getExamsApi(courseId);
-
-                // Extract exams and fetch_type from response
-                const data = response.exams.result || [];
-                const fetchTimeValue = response.exams.timestamp || null;
-                const fetchTypeValue = response.fetch_type || 'unknown';
-
-                setExamConflicts(data);
-                setFetchType(fetchTypeValue);
-                setFetchTime(fetchTimeValue);
-            } catch (error) {
-                setBackendError(true);
-                console.error('Error fetching exam conflicts:', error);
-            } finally {
-                setApiLoading(false);
-            }
-        }
-
-
         getExams();
         loadCourseData();
-    }, [courseId]);
+    }, [courseId, getExams]);
 
 
     const handleBack = () => {
@@ -174,6 +185,19 @@ const Course = () => {
                                         {fetchTime && <><br />{formatTimestamp(fetchTime)}</>}
                                     </span>
                                 </div>
+                            )}
+                            {!apiLoading && (
+                                <button
+                                    className="refresh-exam-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRefreshExams();
+                                    }}
+                                    title={t('refreshText')}
+                                >
+                                    ↻
+                                    <span className="refresh-tooltip">{t('refreshTextExam')}</span>
+                                </button>
                             )}
                             <span className={`expand-icon ${showExams ? 'rotated' : ''}`}>▼</span>
                         </button>
