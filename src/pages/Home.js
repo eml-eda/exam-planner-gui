@@ -5,7 +5,8 @@ import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import './Home.css';
 import { initializeCourses } from '../utils/database';
-// import { clearCoursesCache } from '../utils/database';    // Uncomment for restarting course cache 
+import { reloadCachesApi } from '../utils/api_calls';
+
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
@@ -33,25 +34,36 @@ const Home = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
 
-    useEffect(() => {
-        // clearCoursesCache();    // Uncomment for restarting course cache 
-        const loadCourses = async () => {
-            try {
-                setLoadingCourses(true);
-                const result = await initializeCourses();
-                const fetchTimeValue = result.courses.timestamp || null;
-                const fetchTypeValue = result.fetch_type || 'unknown';
-                setFetchType(fetchTypeValue);
-                setFetchTime(fetchTimeValue);
-                console.log('Courses data loaded');
-            } catch (error) {
-                setBackendError(true);
-                console.error('Error preloading courses data:', error);
-            } finally {
-                setLoadingCourses(false);
-            }
-        };
+    const loadCourses = async () => {
+        try {
+            setLoadingCourses(true);
+            const result = await initializeCourses();
+            const fetchTimeValue = result.courses.timestamp || null;
+            const fetchTypeValue = result.fetch_type || 'unknown';
+            setFetchType(fetchTypeValue);
+            setFetchTime(fetchTimeValue);
+            console.log('Courses data loaded');
+        } catch (error) {
+            setBackendError(true);
+            console.error('Error preloading courses data:', error);
+        } finally {
+            setLoadingCourses(false);
+        }
+    };
 
+    const handleRefresh = async () => {
+        try {
+            setLoadingCourses(true);
+            await reloadCachesApi();
+            await loadCourses();
+        } catch (error) {
+            setBackendError(true);
+            console.error('Error refreshing courses:', error);
+            setLoadingCourses(false);
+        }
+    };
+
+    useEffect(() => {
         loadCourses();
     }, []);
 
@@ -124,6 +136,17 @@ const Home = () => {
                                 {fetchTime && <><br />{formatTimestamp(fetchTime)}</>}
                             </span>
                         </div>
+                    )}
+
+                    {/* Refresh Button */}
+                    {!loadingCourses && (
+                        <button
+                            className="nav-btn refresh-btn"
+                            onClick={handleRefresh}
+                        >
+                            <span className="btn-icon">↻</span>
+                            <span className="refresh-tooltip">{t('refreshTextCourse')}</span>
+                        </button>
                     )}
 
                 </div>

@@ -158,6 +158,46 @@
     background: rgba(255, 255, 255, 0.25);
 }
 
+/* Refresh Button */
+.refresh-btn {
+    min-width: 48px;
+    justify-content: center;
+    position: relative;
+    overflow: visible !important;
+}
+
+.refresh-tooltip {
+    position: absolute;
+    top: 120%;
+    left: -60%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.refresh-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 80%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+
+.refresh-btn:hover .refresh-tooltip {
+    opacity: 1;
+}
+
 /* Main Content */
 .main-content {
     flex: 1;
