@@ -207,7 +207,7 @@ const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
                     }}
                 >
                     <div className="tooltip-header">
-                        <strong>{hoveredExam.course_code}</strong>
+                        <strong>{hoveredExam.course_title}</strong>
                     </div>
                     <div className="tooltip-details">
                         <div>Type: {hoveredExam.exam_type}</div>
