@@ -15,6 +15,39 @@ export const getExamsApi = async (courseCode) => {
 };
 
 
+export const clearExamCacheApi = async (courseCode) => {
+    try {
+        const response = await axios.post(`${baseUrl}/clear_exam_cache/${courseCode}`, null, null);
+        console.log(response.status);
+        return response.data;
+    } catch (error) {
+        console.error("Error clearing exam cache:", error);
+        throw error;
+    }
+};
+
+export const getCoursesApi = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/courses`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching courses data:", error);
+        throw error;
+    }
+}
+
+
+export const getConfigApi = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/config`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching courses data:", error);
+        throw error;
+    }
+}
+
+
 export const reloadDatabaseApi = async (year = null, name = null) => {
     try {
         const params = {
@@ -32,22 +65,13 @@ export const reloadDatabaseApi = async (year = null, name = null) => {
 };
 
 
-export const getCoursesApi = async () => {
+export const reloadCachesApi = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/courses`);
-        return response.data;
+        const response = await axios.post(`${baseUrl}/reload_caches`);
+        console.log(response.status);
+        return response.data;;
     } catch (error) {
-        console.error("Error fetching courses data:", error);
+        console.error("Error reloading caches:", error);
         throw error;
     }
-}
-
-export const getConfigApi = async () => {
-    try {
-        const response = await axios.get(`${baseUrl}/config`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching courses data:", error);
-        throw error;
-    }
-}
+};
