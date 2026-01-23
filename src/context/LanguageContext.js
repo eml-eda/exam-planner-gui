@@ -13,6 +13,8 @@ const translations = {
     settings: { en: 'Settings', it: 'Impostazioni' },
     courses: { en: 'Courses', it: 'Corsi' },
     exams: { en: 'Exams', it: 'Esami' },
+    refreshTextCourse: { en: 'Refresh the courses cache.', it: 'Aggiorna la cache dei corsi.' },
+    refreshTextExam: { en: 'Refresh the exams cache.', it: 'Aggiorna la cache degli esami.' },
 
     // Search
     wait_courses: { en: 'Please wait, loading courses...', it: 'Attendere, caricamento corsi...' },
@@ -85,8 +87,8 @@ const translations = {
     // Error messages
     error: { en: 'Error', it: 'Errore' },
     backend_error_message: {
-        en: 'Unable to load course data. Please check your server availability and refresh the page.',
-        it: 'Impossibile caricare i dati dei corsi. Si prega di verificare la disponibilità del server e aggiornare la pagina.'
+        en: 'Unable to load data. Please check your server availability and refresh the page.',
+        it: 'Impossibile caricare i dati. Si prega di verificare la disponibilità del server e aggiornare la pagina.'
     }
 };
 
