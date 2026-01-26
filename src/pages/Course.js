@@ -7,6 +7,7 @@ import SettingsModal from '../components/SettingsModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
 import { getExamsApi, clearExamCacheApi } from '../utils/api_calls';
+import { useConfig } from '../context/ConfigContext';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -25,6 +26,7 @@ const Course = () => {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         return `${hours}:${minutes}:${seconds} ${day}/${month}`;
     };
+    const { checkConfigUneq, forceRefreshPage } = useConfig();
     const [loading, setLoading] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
@@ -36,9 +38,19 @@ const Course = () => {
     const [backendError, setBackendError] = useState(false);
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
+    const [backendConfigError, setBackendConfigError] = useState(false);
+
+    const checkAndHandleConfig = useCallback(async () => {
+        if (await checkConfigUneq()) {
+            setBackendConfigError(true);
+            forceRefreshPage();
+            return;
+        }
+    }, [checkConfigUneq, forceRefreshPage]);
 
     const getExams = useCallback(async () => {
         try {
+            await checkAndHandleConfig();
             setApiLoading(true);
 
             // Fetch from API (backend handles caching)
@@ -59,10 +71,11 @@ const Course = () => {
         } finally {
             setApiLoading(false);
         }
-    }, [courseId]);
+    }, [courseId, checkAndHandleConfig]);
 
     const handleRefreshExams = async () => {
         try {
+            await checkAndHandleConfig();
             setApiLoading(true);
             await clearExamCacheApi(courseId);
             await getExams();
@@ -76,6 +89,7 @@ const Course = () => {
     useEffect(() => {
         const loadCourseData = async () => {
             try {
+                await checkAndHandleConfig();
                 setLoading(true);
                 const courseData = await getCourseById(courseId);
                 if (courseData) {
@@ -91,7 +105,7 @@ const Course = () => {
 
         getExams();
         loadCourseData();
-    }, [courseId, getExams]);
+    }, [courseId, getExams, checkAndHandleConfig]);
 
 
     const handleBack = () => {
@@ -307,7 +321,7 @@ const Course = () => {
                 />
             )}
 
-            {/* Backend Error Modal */}
+            {/* Backend Error Loading Modal */}
             {backendError && (
                 <div className="error-modal-overlay">
                     <div className="error-modal">
@@ -315,6 +329,19 @@ const Course = () => {
                         <h2 className="error-title">{t('error')}</h2>
                         <p className="error-message">
                             {t('backend_error_message')}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Backend Error Config Modal */}
+            {backendConfigError && (
+                <div className="error-modal-overlay">
+                    <div className="error-modal">
+                        <div className="error-icon">⚠️</div>
+                        <h2 className="error-title">{t('error')}</h2>
+                        <p className="error-message">
+                            {t('backend_error_config_message')}
                         </p>
                     </div>
                 </div>

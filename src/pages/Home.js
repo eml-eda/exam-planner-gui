@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
@@ -6,6 +6,7 @@ import SettingsModal from '../components/SettingsModal';
 import './Home.css';
 import { initializeCourses } from '../utils/database';
 import { reloadCachesApi } from '../utils/api_calls';
+import { useConfig } from '../context/ConfigContext';
 
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showSettings, setShowSettings] = useState(false);
+    const { checkConfigUneq, forceRefreshPage } = useConfig();
 
     // Format timestamp from ISO format to "HH:MM:SS DD/MM"
     const formatTimestamp = (timestamp) => {
@@ -31,10 +33,12 @@ const Home = () => {
     const [locked, setlocked] = useState(false);
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [backendError, setBackendError] = useState(false);
+    const [backendConfigError, setBackendConfigError] = useState(false);
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
 
-    const loadCourses = async () => {
+
+    const loadCourses = useCallback(async () => {
         try {
             setLoadingCourses(true);
             const result = await initializeCourses();
@@ -49,10 +53,16 @@ const Home = () => {
         } finally {
             setLoadingCourses(false);
         }
-    };
+    }, []);
+
 
     const handleRefresh = async () => {
         try {
+            if (await checkConfigUneq()) {
+                setBackendConfigError(true);
+                forceRefreshPage();
+                return;
+            }
             setLoadingCourses(true);
             await reloadCachesApi();
             await loadCourses();
@@ -65,7 +75,7 @@ const Home = () => {
 
     useEffect(() => {
         loadCourses();
-    }, []);
+    }, [loadCourses]);
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -166,7 +176,7 @@ const Home = () => {
                 />
             )}
 
-            {/* Backend Error Modal */}
+            {/* Backend Error Loading Modal */}
             {backendError && (
                 <div className="error-modal-overlay">
                     <div className="error-modal">
@@ -174,6 +184,19 @@ const Home = () => {
                         <h2 className="error-title">{t('error')}</h2>
                         <p className="error-message">
                             {t('backend_error_message')}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Backend Error Config Modal */}
+            {backendConfigError && (
+                <div className="error-modal-overlay">
+                    <div className="error-modal">
+                        <div className="error-icon">⚠️</div>
+                        <h2 className="error-title">{t('error')}</h2>
+                        <p className="error-message">
+                            {t('backend_error_config_message')}
                         </p>
                     </div>
                 </div>
