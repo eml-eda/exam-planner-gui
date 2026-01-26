@@ -8,18 +8,18 @@ import './index.css';
 
 function App() {
     return (
-        <ConfigProvider>
-            <LanguageProvider>
-                <Router>
+        <Router>
+            <ConfigProvider>
+                <LanguageProvider>
                     <div className="App">
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/course/:courseId" element={<Course />} />
                         </Routes>
                     </div>
-                </Router>
-            </LanguageProvider>
-        </ConfigProvider>
+                </LanguageProvider>
+            </ConfigProvider>
+        </Router >
     );
 }
 
