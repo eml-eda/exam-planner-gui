@@ -89,6 +89,10 @@ const translations = {
     backend_error_message: {
         en: 'Unable to load data. Please check your server availability and refresh the page.',
         it: 'Impossibile caricare i dati. Si prega di verificare la disponibilità del server e aggiornare la pagina.'
+    },
+    backend_error_config_message: {
+        en: 'Configuration mismatch detected. Please check your server configuration and refresh the page.',
+        it: 'Rilevata una discrepanza di configurazione. Si prega di verificare la configurazione del server e aggiornare la pagina.'
     }
 };
 
