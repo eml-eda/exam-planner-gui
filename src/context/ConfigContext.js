@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getConfigApi } from '../utils/api_calls';
+import { useNavigate } from 'react-router-dom';
 
 // Create the config context
 const ConfigContext = createContext();
 
 // Config provider component
 export const ConfigProvider = ({ children }) => {
+    const navigate = useNavigate();
     const [config, setConfig] = useState({ year: 2026, name: 'winter' });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -30,15 +32,34 @@ export const ConfigProvider = ({ children }) => {
         fetchConfig();
     }, []);
 
-    const updateConfig = (newConfig) => {
+    const updateConfig = useCallback((newConfig) => {
         setConfig(newConfig);
-    };
+    }, []);
+
+    const checkConfigUneq = useCallback(async () => {
+        const data = await getConfigApi();
+        if (data.year !== config.year || data.name !== config.name) {
+            return true;
+        } else {
+            return false;
+        }
+    }, [config]);
+
+
+    const forceRefreshPage = useCallback(() => {
+        setTimeout(() => {
+            navigate('/');
+            window.location.reload();
+        }, 1500);
+    }, [navigate]);
 
     const value = {
         config,
         updateConfig,
         isLoading,
-        error
+        error,
+        checkConfigUneq,
+        forceRefreshPage
     };
 
     return (
