@@ -26,6 +26,7 @@ export const clearExamCacheApi = async (courseCode) => {
     }
 };
 
+
 export const getCoursesApi = async () => {
     try {
         const response = await axios.get(`${baseUrl}/courses`);
@@ -72,6 +73,17 @@ export const reloadCachesApi = async () => {
         return response.data;;
     } catch (error) {
         console.error("Error reloading caches:", error);
+        throw error;
+    }
+};
+
+export const syncDatabaseApi = async (keys) => {
+    try {
+        const response = await axios.post(`${baseUrl}/sync_database`, keys);
+        console.log(response.status);
+        return response.data;
+    } catch (error) {
+        console.error("Error syncing database:", error);
         throw error;
     }
 };
