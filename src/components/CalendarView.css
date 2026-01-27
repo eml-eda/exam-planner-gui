@@ -91,6 +91,7 @@
 
 .exam-item {
     padding: 6px 8px;
+    margin-top: 1px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 600;
@@ -99,6 +100,12 @@
     transition: var(--transition-smooth);
     border: 1px solid transparent;
     position: relative;
+}
+
+.exam-item.compact {
+    padding: 1px 0px;
+    margin-top: 0px;
+    border: 1px solid rgb(0, 0, 0) !important;
 }
 
 .exam-item:hover {
@@ -111,7 +118,7 @@
 .exam-item.current-course {
     background: var(--success-green);
     color: white;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .exam-item.current-course:hover {
@@ -122,7 +129,7 @@
 .exam-item.conflict-minor {
     background: var(--warning-yellow);
     color: white;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .exam-item.conflict-minor:hover {
@@ -133,7 +140,7 @@
 .exam-item.conflict-major {
     background: var(--danger-red);
     color: white;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .exam-item.conflict-major:hover {
@@ -144,7 +151,7 @@
 .exam-item.neutral {
     background: rgba(255, 255, 255, 0.2);
     color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .exam-item.neutral:hover {
@@ -161,9 +168,24 @@
     margin: 0px;
 }
 
+.exam-code.compact {
+    padding: 0px;
+    font-size: 10px;
+}
+
 .exam-conflicts {
     font-size: 12px;
     margin: 0px;
+    max-height: 20px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+
+.exam-conflicts.compact {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
 }
 
 /* Tooltip */

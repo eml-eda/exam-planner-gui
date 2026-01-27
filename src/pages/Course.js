@@ -39,6 +39,7 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
+    const [compactView, setCompactView] = useState(true);
 
     const checkAndHandleConfig = useCallback(async () => {
         if (await checkConfigUneq()) {
@@ -189,6 +190,16 @@ const Course = () => {
                             onClick={() => setShowExams(!showExams)}
                         >
                             <h2>{t('courseExams')}</h2>
+                            <button
+                                className="view-toggle-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCompactView(!compactView);
+                                }}
+                                title={compactView ? t('switchToFull') : t('switchToCompact')}
+                            >
+                                {compactView ? `📋 ${t('compact')}` : `📄 ${t('full')}`}
+                            </button>
                             {!apiLoading && fetchType && (
                                 <div
                                     className={`fetch-indicator ${fetchType}`}
@@ -235,6 +246,7 @@ const Course = () => {
                                         courseId={courseId}
                                         courseName={course.title}
                                         examConflicts={examConflicts}
+                                        compactView={compactView}
                                     />
                                 )}
                             </div>

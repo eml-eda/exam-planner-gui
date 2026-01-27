@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './CalendarView.css';
 
-const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
+const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [dateRange, setDateRange] = useState({ start: '2026-01-12', end: '2026-02-21' });
@@ -169,17 +169,17 @@ const CalendarView = ({ courseId, courseName, examConflicts = [] }) => {
                                                         {dayExams.map((exam, examIndex) => (
                                                             <div
                                                                 key={examIndex}
-                                                                className={`exam-item ${getExamColor(exam)}`}
+                                                                className={`exam-item ${getExamColor(exam)} ${compactView ? 'compact' : ''}`}
                                                                 onClick={() => handleExamClick(exam)}
                                                                 onMouseEnter={() => setHoveredExam(exam)}
                                                                 onMouseLeave={() => setHoveredExam(null)}
                                                                 style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
                                                             >
-                                                                <p className="exam-code">
+                                                                <p className={`exam-code ${compactView ? 'compact' : ''}`}>
                                                                     {exam.course_code}
                                                                 </p>
                                                                 {exam.conflict_info && exam.conflict_info.all > 0 && (
-                                                                    <p className="exam-conflicts exam-code">
+                                                                    <p className={`exam-conflicts exam-code ${compactView ? 'compact' : ''}`}>
                                                                         ({exam.conflict_info.all} - {exam.conflict_info.new})
                                                                     </p>
                                                                 )}
