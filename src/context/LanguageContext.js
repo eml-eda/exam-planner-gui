@@ -78,6 +78,14 @@ const translations = {
     endDate: { en: 'End Date', it: 'Data Fine' },
     save: { en: 'Save', it: 'Salva' },
     cancel: { en: 'Cancel', it: 'Annulla' },
+    syncDatabase: { en: 'Sync Database', it: 'Sincronizza Database' },
+    syncDatabaseTitle: { en: 'Database Synchronization', it: 'Sincronizzazione Database' },
+    checkAll: { en: 'Check All', it: 'Seleziona Tutto' },
+    uncheckAll: { en: 'Uncheck All', it: 'Deseleziona Tutto' },
+    sync: { en: 'Sync', it: 'Sincronizza' },
+    syncing: { en: 'Syncing...', it: 'Sincronizzazione...' },
+    syncSuccess: { en: 'Database synchronized successfully', it: 'Database sincronizzato con successo' },
+    syncWarning: { en: 'Select the keys to synchronize from the backend server.', it: 'Seleziona i chiavi da sincronizzare dal server backend.' },
 
     // Exam details
     examTime: { en: 'Exam Time', it: 'Orario Esame' },
