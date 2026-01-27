@@ -174,7 +174,7 @@ const Course = () => {
                         onClick={() => setShowSettings(true)}
                     >
                         <span className="btn-icon">⚙️</span>
-                        <span className="btn-text">{t('config')}</span>
+                        <span className="btn-text">{t('settings')}</span>
                     </button>
                 </div>
             </div>
