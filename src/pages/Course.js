@@ -39,11 +39,15 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
-    const [view, setView] = useState("full"); // "full" or "compact" or "timed"
+    const [view, setView] = useState(null); // "full" or "compact" or "timed"
     const [sliderStyle, setSliderStyle] = useState({});
     const fullBtnRef = useRef(null);
     const compactBtnRef = useRef(null);
     const timedBtnRef = useRef(null);
+
+    useEffect(() => {
+        setView('full');
+    }, []);
 
     const checkAndHandleConfig = useCallback(async () => {
         if (await checkConfigUneq()) {
@@ -145,7 +149,7 @@ const Course = () => {
         // Also update on window resize
         window.addEventListener('resize', updateSlider);
         return () => window.removeEventListener('resize', updateSlider);
-    }, [view, isEnglish]); // Re-calculate when language changes (text length changes)
+    }, [view, isEnglish]);
 
     if (loading) {
         return (
