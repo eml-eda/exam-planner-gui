@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { getCourseById } from '../utils/database';
@@ -39,7 +39,11 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
-    const [compactView, setCompactView] = useState(true);
+    const [view, setView] = useState("full"); // "full" or "compact" or "timed"
+    const [sliderStyle, setSliderStyle] = useState({});
+    const fullBtnRef = useRef(null);
+    const compactBtnRef = useRef(null);
+    const timedBtnRef = useRef(null);
 
     const checkAndHandleConfig = useCallback(async () => {
         if (await checkConfigUneq()) {
@@ -112,6 +116,36 @@ const Course = () => {
     const handleBack = () => {
         navigate(-1);
     };
+
+    // Update slider position and width when view changes
+    useEffect(() => {
+        const updateSlider = () => {
+            const refs = {
+                full: fullBtnRef.current,
+                compact: compactBtnRef.current,
+                timed: timedBtnRef.current
+            };
+
+            const activeBtn = refs[view];
+            if (activeBtn) {
+                const parent = activeBtn.parentElement;
+                if (parent) {
+                    const parentRect = parent.getBoundingClientRect();
+                    const btnRect = activeBtn.getBoundingClientRect();
+                    const left = btnRect.left - parentRect.left;
+                    setSliderStyle({
+                        left: `${left}px`,
+                        width: `${btnRect.width}px`
+                    });
+                }
+            }
+        };
+
+        updateSlider();
+        // Also update on window resize
+        window.addEventListener('resize', updateSlider);
+        return () => window.removeEventListener('resize', updateSlider);
+    }, [view, isEnglish]); // Re-calculate when language changes (text length changes)
 
     if (loading) {
         return (
@@ -190,16 +224,33 @@ const Course = () => {
                             onClick={() => setShowExams(!showExams)}
                         >
                             <h2>{t('courseExams')}</h2>
-                            <button
-                                className="view-toggle-btn"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setCompactView(!compactView);
-                                }}
-                                title={compactView ? t('switchToFull') : t('switchToCompact')}
-                            >
-                                {compactView ? `📋 ${t('compact')}` : `📄 ${t('full')}`}
-                            </button>
+                            <div className="view-segmented-control" onClick={(e) => e.stopPropagation()}>
+                                <div className="segment-slider" style={sliderStyle}></div>
+                                <button
+                                    ref={fullBtnRef}
+                                    className={`segment-btn ${view === 'full' ? 'active' : ''}`}
+                                    onClick={() => setView('full')}
+                                    title={t('switchToFull')}
+                                >
+                                    📄 {t('full')}
+                                </button>
+                                <button
+                                    ref={compactBtnRef}
+                                    className={`segment-btn ${view === 'compact' ? 'active' : ''}`}
+                                    onClick={() => setView('compact')}
+                                    title={t('switchToCompact')}
+                                >
+                                    📋 {t('compact')}
+                                </button>
+                                <button
+                                    ref={timedBtnRef}
+                                    className={`segment-btn ${view === 'timed' ? 'active' : ''}`}
+                                    onClick={() => setView('timed')}
+                                    title={t('switchToTimed')}
+                                >
+                                    ⏱️ {t('timed')}
+                                </button>
+                            </div>
                             {!apiLoading && fetchType && (
                                 <div
                                     className={`fetch-indicator ${fetchType}`}
@@ -246,7 +297,7 @@ const Course = () => {
                                         courseId={courseId}
                                         courseName={course.title}
                                         examConflicts={examConflicts}
-                                        compactView={compactView}
+                                        view={view}
                                     />
                                 )}
                             </div>
