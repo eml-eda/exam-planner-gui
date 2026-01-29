@@ -1,6 +1,7 @@
 /* Global Variables and Reset */
 :root {
     --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-bg-more: rgba(255, 255, 255, 0.6);
     --glass-border: rgba(255, 255, 255, 0.2);
     --glass-shadow: rgba(0, 0, 0, 0.1);
     --silver-light: #f8f9fa;
@@ -8,6 +9,7 @@
     --silver-dark: #dee2e6;
     --accent-silver: #adb5bd;
     --text-primary: #2d3748;
+    --text-time: #2f2661;
     --text-secondary: #4a5568;
     --text-muted: #3d3b77;
     --success-green: rgba(64, 209, 88, 0.8);
