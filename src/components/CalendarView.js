@@ -166,25 +166,34 @@ const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
 
                                                 {dayExams.length > 0 && isInRange && (
                                                     <div className="day-exams">
-                                                        {dayExams.map((exam, examIndex) => (
-                                                            <div
-                                                                key={examIndex}
-                                                                className={`exam-item ${getExamColor(exam)} ${compactView ? 'compact' : ''}`}
-                                                                onClick={() => handleExamClick(exam)}
-                                                                onMouseEnter={() => setHoveredExam(exam)}
-                                                                onMouseLeave={() => setHoveredExam(null)}
-                                                                style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
-                                                            >
-                                                                <p className={`exam-code ${compactView ? 'compact' : ''}`}>
-                                                                    {exam.course_code}
-                                                                </p>
-                                                                {exam.conflict_info && exam.conflict_info.all > 0 && (
-                                                                    <p className={`exam-conflicts exam-code ${compactView ? 'compact' : ''}`}>
-                                                                        ({exam.conflict_info.all} - {exam.conflict_info.new})
+                                                        {dayExams.slice().sort((a, b) => {
+                                                            if (!a.start_time) return 1;
+                                                            if (!b.start_time) return -1;
+                                                            return a.start_time.localeCompare(b.start_time);
+                                                        }).sort((a, b) => {
+                                                            if (!a.end_time) return 1;
+                                                            if (!b.end_time) return -1;
+                                                            return a.end_time.localeCompare(b.end_time);
+                                                        })
+                                                            .map((exam, examIndex) => (
+                                                                <div
+                                                                    key={examIndex}
+                                                                    className={`exam-item ${getExamColor(exam)} ${compactView ? 'compact' : ''}`}
+                                                                    onClick={() => handleExamClick(exam)}
+                                                                    onMouseEnter={() => setHoveredExam(exam)}
+                                                                    onMouseLeave={() => setHoveredExam(null)}
+                                                                    style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
+                                                                >
+                                                                    <p className={`exam-code ${compactView ? 'compact' : ''}`}>
+                                                                        {exam.course_code}
                                                                     </p>
-                                                                )}
-                                                            </div>
-                                                        ))}
+                                                                    {exam.conflict_info && exam.conflict_info.all > 0 && (
+                                                                        <p className={`exam-conflicts exam-code ${compactView ? 'compact' : ''}`}>
+                                                                            ({exam.conflict_info.all} - {exam.conflict_info.new})
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            ))}
                                                     </div>
                                                 )}
                                             </div>
@@ -198,7 +207,7 @@ const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
             </div>
 
             {/* Exam tooltip */}
-            {hoveredExam && hoveredExam.course_code !== courseId && (
+            {hoveredExam && (
                 <div
                     className="exam-tooltip"
                     style={{
@@ -214,7 +223,7 @@ const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
                         {hoveredExam.start_time && hoveredExam.end_time && (
                             <div>Time: {hoveredExam.start_time} - {hoveredExam.end_time}</div>
                         )}
-                        {hoveredExam.conflict_info && (
+                        {hoveredExam.conflict_info && hoveredExam.course_code !== courseId && (
                             <>
                                 <div>Total Conflicts: {hoveredExam.conflict_info.all}</div>
                                 <div>New Students Conflicts: {hoveredExam.conflict_info.new}</div>
