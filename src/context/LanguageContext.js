@@ -12,8 +12,10 @@ const translations = {
     config: { en: 'Config', it: 'Configurazione' },
     switchToFull: { en: 'Switch to Full View', it: 'Passa alla Vista Completa' },
     switchToCompact: { en: 'Switch to Compact View', it: 'Passa alla Vista Compatta' },
+    switchToTimed: { en: 'Switch to Timed View', it: 'Passa alla Vista Temporale' },
     compact: { en: 'Compact', it: 'Compatta' },
     full: { en: 'Full', it: 'Completa' },
+    timed: { en: 'Timed', it: 'Temporale' },
     settings: { en: 'Settings', it: 'Impostazioni' },
     courses: { en: 'Courses', it: 'Corsi' },
     exams: { en: 'Exams', it: 'Esami' },
@@ -71,6 +73,8 @@ const translations = {
     // Buttons
     studentsList: { en: 'Students List', it: 'Lista Studenti' },
     conflicts: { en: 'Conflicts', it: 'Conflitti' },
+    start: { en: 'Start', it: 'Inizio' },
+    end: { en: 'End', it: 'Fine' },
 
     // Settings modal
     examDateRange: { en: 'Exam Date Range', it: 'Periodo Esami' },
