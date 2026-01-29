@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './CalendarView.css';
 
-const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
+const CalendarView = ({ courseId, examConflicts = [], view }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [dateRange, setDateRange] = useState({ start: '2026-01-12', end: '2026-02-21' });
@@ -160,8 +160,16 @@ const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
                                                 key={dayIndex}
                                                 className={`calendar-day ${!isInRange ? 'out-of-range' : ''}`}
                                             >
-                                                <div className="day-number">
-                                                    {date.getDate()}
+                                                <div className={`day-number-container ${view === 'timed' ? 'timed' : ''}`}>
+                                                    <span className={`day-number-start ${view === 'timed' ? 'timed' : ''}`}>
+                                                        {t('start')}
+                                                    </span>
+                                                    <div className="day-number">
+                                                        {date.getDate()}
+                                                    </div>
+                                                    <span className={`day-number-end ${view === 'timed' ? 'timed' : ''}`}>
+                                                        {t('end')}
+                                                    </span>
                                                 </div>
 
                                                 {dayExams.length > 0 && isInRange && (
@@ -176,22 +184,29 @@ const CalendarView = ({ courseId, examConflicts = [], compactView }) => {
                                                             return a.end_time.localeCompare(b.end_time);
                                                         })
                                                             .map((exam, examIndex) => (
-                                                                <div
-                                                                    key={examIndex}
-                                                                    className={`exam-item ${getExamColor(exam)} ${compactView ? 'compact' : ''}`}
-                                                                    onClick={() => handleExamClick(exam)}
-                                                                    onMouseEnter={() => setHoveredExam(exam)}
-                                                                    onMouseLeave={() => setHoveredExam(null)}
-                                                                    style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
-                                                                >
-                                                                    <p className={`exam-code ${compactView ? 'compact' : ''}`}>
-                                                                        {exam.course_code}
-                                                                    </p>
-                                                                    {exam.conflict_info && exam.conflict_info.all > 0 && (
-                                                                        <p className={`exam-conflicts exam-code ${compactView ? 'compact' : ''}`}>
-                                                                            ({exam.conflict_info.all} - {exam.conflict_info.new})
+                                                                <div key={examIndex} className="exam-entry">
+                                                                    <div className={`exam-start ${view === 'timed' ? 'timed' : ''}`}>
+                                                                        <p className='exam-time'>{exam.start_time}</p>
+                                                                    </div>
+                                                                    <div
+                                                                        className={`exam-item ${getExamColor(exam)} ${view === 'compact' ? 'compact' : ''} ${view === 'timed' ? 'timed' : ''}`}
+                                                                        onClick={() => handleExamClick(exam)}
+                                                                        onMouseEnter={() => setHoveredExam(exam)}
+                                                                        onMouseLeave={() => setHoveredExam(null)}
+                                                                        style={{ cursor: exam.course_code !== courseId ? 'pointer' : 'default' }}
+                                                                    >
+                                                                        <p className={`exam-code ${view !== 'full' ? 'compact' : ''}`}>
+                                                                            {exam.course_code}
                                                                         </p>
-                                                                    )}
+                                                                        {exam.conflict_info && exam.conflict_info.all > 0 && (
+                                                                            <p className={`exam-conflicts exam-code ${view !== 'full' ? 'compact' : ''}`}>
+                                                                                ({exam.conflict_info.all} - {exam.conflict_info.new})
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className={`exam-end ${view === 'timed' ? 'timed' : ''}`}>
+                                                                        <p className='exam-time'>{exam.end_time}</p>
+                                                                    </div>
                                                                 </div>
                                                             ))}
                                                     </div>
