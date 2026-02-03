@@ -74,7 +74,7 @@ const Course = () => {
     useEffect(() => {
         setTimeout(() => {
             updateSlider();
-        }, 250);
+        }, 500);
     }, [updateSlider]);
 
     const checkAndHandleConfig = useCallback(async () => {
