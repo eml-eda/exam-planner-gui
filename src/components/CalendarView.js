@@ -175,13 +175,13 @@ const CalendarView = ({ courseId, examConflicts = [], view }) => {
                                                 {dayExams.length > 0 && isInRange && (
                                                     <div className="day-exams">
                                                         {dayExams.slice().sort((a, b) => {
-                                                            if (!a.start_time) return 1;
-                                                            if (!b.start_time) return -1;
-                                                            return a.start_time.localeCompare(b.start_time);
-                                                        }).sort((a, b) => {
                                                             if (!a.end_time) return 1;
                                                             if (!b.end_time) return -1;
                                                             return a.end_time.localeCompare(b.end_time);
+                                                        }).sort((a, b) => {
+                                                            if (!a.start_time) return 1;
+                                                            if (!b.start_time) return -1;
+                                                            return a.start_time.localeCompare(b.start_time);
                                                         })
                                                             .map((exam, examIndex) => (
                                                                 <div key={examIndex} className="exam-entry">
