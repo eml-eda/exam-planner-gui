@@ -39,15 +39,43 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
-    const [view, setView] = useState(null); // "full" or "compact" or "timed"
+    const [view, setView] = useState("full"); // "full" or "compact" or "timed"
     const [sliderStyle, setSliderStyle] = useState({});
     const fullBtnRef = useRef(null);
     const compactBtnRef = useRef(null);
     const timedBtnRef = useRef(null);
 
+
+
+    const updateSlider = useCallback(() => {
+        console.log("Updating slider position for view:", view);
+        const refs = {
+            full: fullBtnRef.current,
+            compact: compactBtnRef.current,
+            timed: timedBtnRef.current
+        };
+
+        const activeBtn = refs[view];
+        if (activeBtn) {
+            const parent = activeBtn.parentElement;
+            if (parent) {
+                const parentRect = parent.getBoundingClientRect();
+                const btnRect = activeBtn.getBoundingClientRect();
+                const left = btnRect.left - parentRect.left;
+                setSliderStyle({
+                    left: `${left}px`,
+                    width: `${btnRect.width}px`
+                });
+            }
+        }
+    }, [view]);
+
+
     useEffect(() => {
-        setView('full');
-    }, []);
+        setTimeout(() => {
+            updateSlider();
+        }, 250);
+    }, [updateSlider]);
 
     const checkAndHandleConfig = useCallback(async () => {
         if (await checkConfigUneq()) {
@@ -123,33 +151,11 @@ const Course = () => {
 
     // Update slider position and width when view changes
     useEffect(() => {
-        const updateSlider = () => {
-            const refs = {
-                full: fullBtnRef.current,
-                compact: compactBtnRef.current,
-                timed: timedBtnRef.current
-            };
-
-            const activeBtn = refs[view];
-            if (activeBtn) {
-                const parent = activeBtn.parentElement;
-                if (parent) {
-                    const parentRect = parent.getBoundingClientRect();
-                    const btnRect = activeBtn.getBoundingClientRect();
-                    const left = btnRect.left - parentRect.left;
-                    setSliderStyle({
-                        left: `${left}px`,
-                        width: `${btnRect.width}px`
-                    });
-                }
-            }
-        };
-
         updateSlider();
         // Also update on window resize
         window.addEventListener('resize', updateSlider);
         return () => window.removeEventListener('resize', updateSlider);
-    }, [view, isEnglish]);
+    }, [view, isEnglish, updateSlider]);
 
     if (loading) {
         return (
@@ -223,9 +229,10 @@ const Course = () => {
                 <div className="content-sections">
                     {/* Course Exams Section */}
                     <div className={`section-container ${showExams ? 'expanded' : 'collapsed'}`}>
-                        <button
+                        <div
                             className="section-header"
                             onClick={() => setShowExams(!showExams)}
+                            style={{ cursor: 'pointer' }}
                         >
                             <h2>{t('courseExams')}</h2>
                             <div className="view-segmented-control" onClick={(e) => e.stopPropagation()}>
@@ -280,7 +287,7 @@ const Course = () => {
                                 </button>
                             )}
                             <span className={`expand-icon ${showExams ? 'rotated' : ''}`}>▼</span>
-                        </button>
+                        </div>
 
                         {showExams && (
                             <div className="section-content">
@@ -310,13 +317,14 @@ const Course = () => {
 
                     {/* Course Info Section */}
                     <div className={`section-container ${showInfo ? 'expanded' : 'collapsed'}`}>
-                        <button
+                        <div
                             className="section-header"
                             onClick={() => setShowInfo(!showInfo)}
+                            style={{ cursor: 'pointer' }}
                         >
                             <h2>{t('courseInfo')}</h2>
                             <span className={`expand-icon ${showInfo ? 'rotated' : ''}`}>▼</span>
-                        </button>
+                        </div>
 
                         {showInfo && (
                             <div className="section-content">
