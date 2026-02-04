@@ -39,7 +39,7 @@ const Course = () => {
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
-    const [view, setView] = useState("full"); // "full" or "compact" or "timed"
+    const [view, setView] = useState(null); // "full" or "compact" or "timed"
     const [sliderStyle, setSliderStyle] = useState({});
     const fullBtnRef = useRef(null);
     const compactBtnRef = useRef(null);
@@ -71,12 +71,6 @@ const Course = () => {
     }, [view]);
 
 
-    useEffect(() => {
-        setTimeout(() => {
-            updateSlider();
-        }, 500);
-    }, [updateSlider]);
-
     const checkAndHandleConfig = useCallback(async () => {
         if (await checkConfigUneq()) {
             setBackendConfigError(true);
@@ -87,8 +81,8 @@ const Course = () => {
 
     const getExams = useCallback(async () => {
         try {
-            await checkAndHandleConfig();
             setApiLoading(true);
+            await checkAndHandleConfig();
 
             // Fetch from API (backend handles caching)
             console.log(`Fetching exam conflicts for course code ${courseId}`);
@@ -112,8 +106,8 @@ const Course = () => {
 
     const handleRefreshExams = async () => {
         try {
-            await checkAndHandleConfig();
             setApiLoading(true);
+            await checkAndHandleConfig();
             await clearExamCacheApi(courseId);
             await getExams();
         } catch (error) {
@@ -197,7 +191,9 @@ const Course = () => {
 
                 {/* Search Bar */}
                 <div className="nav-search">
-                    <SearchComponent />
+                    <SearchComponent
+                        courseView={true}
+                    />
                 </div>
 
                 {/* Right side buttons */}
@@ -309,6 +305,7 @@ const Course = () => {
                                         courseName={course.title}
                                         examConflicts={examConflicts}
                                         view={view}
+                                        setView={setView}
                                     />
                                 )}
                             </div>

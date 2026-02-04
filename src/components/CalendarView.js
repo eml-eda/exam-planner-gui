@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import './CalendarView.css';
 
-const CalendarView = ({ courseId, examConflicts = [], view }) => {
+const CalendarView = ({ courseId, examConflicts = [], view, setView }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [dateRange, setDateRange] = useState({ start: '2026-01-12', end: '2026-02-21' });
@@ -18,6 +18,8 @@ const CalendarView = ({ courseId, examConflicts = [], view }) => {
     };
 
     useEffect(() => {
+        setView('full'); // Default to full view when component mounts
+
         // Calculate date range from examConflicts data
         if (examConflicts.length > 0) {
             const dates = examConflicts.map(ec => ec.date).sort();
@@ -25,7 +27,7 @@ const CalendarView = ({ courseId, examConflicts = [], view }) => {
             const endDate = dates[dates.length - 1];
             setDateRange({ start: startDate, end: endDate });
         }
-    }, [examConflicts]);
+    }, [examConflicts, setView]);
 
     useEffect(() => {
         const handleMouseMove = (e) => {
@@ -158,7 +160,7 @@ const CalendarView = ({ courseId, examConflicts = [], view }) => {
                                         return (
                                             <div
                                                 key={dayIndex}
-                                                className={`calendar-day ${!isInRange ? 'out-of-range' : ''}`}
+                                                className={`calendar-day ${!isInRange ? 'out-of-range' : ''} ${view === 'timed' ? 'timed' : ''}`}
                                             >
                                                 <div className={`day-number-container ${view === 'timed' ? 'timed' : ''}`}>
                                                     <span className={`day-number-start ${view === 'timed' ? 'timed' : ''}`}>
