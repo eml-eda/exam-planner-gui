@@ -58,12 +58,12 @@ const Home = () => {
 
     const handleRefresh = async () => {
         try {
+            setLoadingCourses(true);
             if (await checkConfigUneq()) {
                 setBackendConfigError(true);
                 forceRefreshPage();
                 return;
             }
-            setLoadingCourses(true);
             await reloadCachesApi();
             await loadCourses();
         } catch (error) {
