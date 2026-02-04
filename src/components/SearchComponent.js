@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { searchCourses } from '../utils/database';
 import './SearchComponent.css';
 
-const SearchComponent = ({ setlocked, isDisabled }) => {
+const SearchComponent = ({ setlocked, isDisabled, courseView }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
@@ -108,7 +108,7 @@ const SearchComponent = ({ setlocked, isDisabled }) => {
                 <input
                     ref={inputRef}
                     type="text"
-                    className="search-input"
+                    className={`search-input${courseView ? ' course-view' : ''}`}
                     placeholder={isDisabled ? t('wait_courses') : t('search')}
                     value={query}
                     onChange={handleInputChange}
