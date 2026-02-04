@@ -64,6 +64,10 @@
     flex-direction: column;
 }
 
+.calendar-day.timed {
+    padding: 8px 3px;
+}
+
 .calendar-day:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
@@ -122,6 +126,7 @@
 }
 
 .day-exams {
+    margin: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -150,7 +155,7 @@
 .exam-end.timed {
     display: flex;
     opacity: 1;
-    width: 25px;
+    width: 32px;
     flex-direction: column;
     justify-content: center;
     align-items: center;

@@ -21,6 +21,11 @@
     transition: var(--transition-smooth);
 }
 
+
+.search-input.course-view {
+    height: 50px;
+}
+
 .search-input::placeholder {
     color: var(--text-muted);
     opacity: 0.8;

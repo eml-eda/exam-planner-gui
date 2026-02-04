@@ -258,11 +258,11 @@
 }
 
 .section-container:first-child {
-    flex: 5;
+    flex: 53;
 }
 
 .section-container:last-child {
-    flex: 2;
+    flex: 17;
 }
 
 .section-container.expanded:hover {
