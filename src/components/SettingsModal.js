@@ -65,7 +65,17 @@ const SettingsModal = ({ onClose }) => {
     };
 
     const handleCheckboxChange = (key) => {
-        setSyncKeys(prev => ({ ...prev, [key]: !prev[key] }));
+        setSyncKeys(prev => {
+            const newValue = !prev[key];
+            const updated = { ...prev, [key]: newValue };
+            
+            // If exams is being checked, also check offerings
+            if (key === 'exams' && newValue === true) {
+                updated.offerings = true;
+            }
+            
+            return updated;
+        });
         setSyncError(null);
         setSyncSuccessMessage(null);
     };
@@ -141,10 +151,10 @@ const SettingsModal = ({ onClose }) => {
                 <div className="modal-body">
                     {/* Config Section */}
                     <div className="setting-group">
-                        <h3>Exam Session Configuration</h3>
+                        <h3>{t('examSessionConfiguration')}</h3>
                         <div className="date-inputs">
                             <div className="input-group">
-                                <label>Year</label>
+                                <label>{t('year')}</label>
                                 <select
                                     value={year}
                                     onChange={(e) => setYear(e.target.value)}
@@ -156,7 +166,7 @@ const SettingsModal = ({ onClose }) => {
                                 </select>
                             </div>
                             <div className="input-group">
-                                <label>Session Name</label>
+                                <label>{t('sessionName')}</label>
                                 <select
                                     value={sessionName}
                                     onChange={(e) => setSessionName(e.target.value)}
@@ -174,7 +184,7 @@ const SettingsModal = ({ onClose }) => {
                     </div>
 
                     <div className="message warning-message">
-                        ⚠️ Saving will reload backend server. Ensure no other users are active.
+                        ⚠️ {t('configWarning')}
                     </div>
 
                     {error && (
@@ -186,7 +196,7 @@ const SettingsModal = ({ onClose }) => {
                     {successMessage && (
                         <div className="message success-message">
                             {successMessage}
-                            <p>Now Reloading the back-end....</p>
+                            <p>{t('reloadingBackend')}</p>
                         </div>
                     )}
 
