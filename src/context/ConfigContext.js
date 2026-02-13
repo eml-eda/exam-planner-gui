@@ -11,6 +11,8 @@ export const ConfigProvider = ({ children }) => {
     const [config, setConfig] = useState({ year: 2026, name: 'winter' });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [lastConfigCheck, setLastConfigCheck] = useState(null);
+    const [cachedConfigResult, setCachedConfigResult] = useState(false);
 
     // Fetch config from backend on mount
     useEffect(() => {
@@ -37,13 +39,26 @@ export const ConfigProvider = ({ children }) => {
     }, []);
 
     const checkConfigUneq = useCallback(async () => {
-        const data = await getConfigApi();
-        if (data.year !== config.year || data.name !== config.name) {
-            return true;
-        } else {
-            return false;
+        const now = Date.now();
+        const MAX_MINUTES = 5 * 60 * 1000; // X = 5 minutes in milliseconds
+
+        // If less than X minutes since last check, return cached result
+        if (lastConfigCheck && (now - lastConfigCheck) < MAX_MINUTES) {
+            console.log('Using cached config check result');
+            return cachedConfigResult;
         }
-    }, [config]);
+
+        // Make API call if X minutes have passed or first check
+        console.log('Checking config from API');
+        const data = await getConfigApi();
+        const isUnequal = data.year !== config.year || data.name !== config.name;
+
+        // Update cache
+        setLastConfigCheck(now);
+        setCachedConfigResult(isUnequal);
+
+        return isUnequal;
+    }, [config, lastConfigCheck, cachedConfigResult]);
 
 
     const forceRefreshPage = useCallback(() => {
