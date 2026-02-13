@@ -8,6 +8,7 @@ import CalendarView from '../components/CalendarView';
 import './Course.css';
 import { getExamsApi, clearExamCacheApi } from '../utils/api_calls';
 import { useConfig } from '../context/ConfigContext';
+import { addRecentCourse } from '../utils/recentCourses';
 
 const Course = () => {
     const { courseId } = useParams();
@@ -125,6 +126,8 @@ const Course = () => {
                 const courseData = await getCourseById(courseId);
                 if (courseData) {
                     setCourse(courseData);
+                    // Add course to recently viewed list
+                    addRecentCourse(courseData);
                 }
             } catch (error) {
                 setBackendError(true);
@@ -177,17 +180,20 @@ const Course = () => {
     return (
         <div className="course-container">
             {/* Top Navigation */}
-            <div className="top-nav">
-                {/* Back Button */}
-                <button
-                    className={`nav-btn back-btn ${backHover ? 'expanded' : ''}`}
-                    onMouseEnter={() => setBackHover(true)}
-                    onMouseLeave={() => setBackHover(false)}
-                    onClick={handleBack}
-                >
-                    <span className="btn-icon">←</span>
-                    <span className="btn-text">{t('back')}</span>
-                </button>
+            <div className="course-top-nav">
+                {/* Left side buttons */}
+                <div className="nav-left">
+                    {/* Back Button */}
+                    <button
+                        className={`nav-btn back-btn ${backHover ? 'expanded' : ''}`}
+                        onMouseEnter={() => setBackHover(true)}
+                        onMouseLeave={() => setBackHover(false)}
+                        onClick={handleBack}
+                    >
+                        <span className="btn-icon">←</span>
+                        <span className="btn-text">{t('back')}</span>
+                    </button>
+                </div>
 
                 {/* Search Bar */}
                 <div className="nav-search">
@@ -199,12 +205,21 @@ const Course = () => {
                 {/* Right side buttons */}
                 <div className="nav-right">
                     {/* Language Toggle */}
-                    <button
-                        className="nav-btn language-btn"
-                        onClick={toggleLanguage}
-                    >
-                        {isEnglish ? t('english') : t('italian')}
-                    </button>
+                    <div className="language-toggle">
+                        <button
+                            className={`language-option ${!isEnglish ? 'active' : ''}`}
+                            onClick={() => !isEnglish || toggleLanguage()}
+                        >
+                            IT
+                        </button>
+                        <button
+                            className={`language-option ${isEnglish ? 'active' : ''}`}
+                            onClick={() => isEnglish || toggleLanguage()}
+                        >
+                            EN
+                        </button>
+                        <div className={`language-slider ${isEnglish ? 'en' : 'it'}`}></div>
+                    </div>
 
                     {/* Settings Button */}
                     <button
@@ -225,11 +240,7 @@ const Course = () => {
                 <div className="content-sections">
                     {/* Course Exams Section */}
                     <div className={`section-container ${showExams ? 'expanded' : 'collapsed'}`}>
-                        <div
-                            className="section-header"
-                            onClick={() => setShowExams(!showExams)}
-                            style={{ cursor: 'pointer' }}
-                        >
+                        <div className="section-header" onClick={() => setShowExams(!showExams)} >
                             <h2>{t('courseExams')}</h2>
                             <div className="view-segmented-control" onClick={(e) => e.stopPropagation()}>
                                 <div className="segment-slider" style={sliderStyle}></div>
@@ -258,17 +269,20 @@ const Course = () => {
                                     ⏱️ {t('timed')}
                                 </button>
                             </div>
+
                             {!apiLoading && fetchType && (
-                                <div
-                                    className={`fetch-indicator ${fetchType}`}
-                                    title={fetchType === 'from-cache' ? t('exams') + ' ' + t('dataFromCache') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '') : t('exams') + ' ' + t('freshlyQueriedData') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '')}
-                                >
-                                    <span className="fetch-tooltip">
+                                <div className="fetch-container">
+                                    <div
+                                        className={`fetch-indicator ${fetchType}`}
+                                        title={fetchType === 'from-cache' ? t('exams') + ' ' + t('dataFromCache') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '') : t('exams') + ' ' + t('freshlyQueriedData') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '')}
+                                    ></div>
+                                    <p className="fetch-details">
                                         {fetchType === 'from-cache' ? t('exams') + ' ' + t('cached') : t('exams') + ' ' + t('fresh')}
                                         {fetchTime && <><br />{formatTimestamp(fetchTime)}</>}
-                                    </span>
+                                    </p>
                                 </div>
                             )}
+
                             {!apiLoading && (
                                 <button
                                     className="refresh-exam-btn"
@@ -317,7 +331,6 @@ const Course = () => {
                         <div
                             className="section-header"
                             onClick={() => setShowInfo(!showInfo)}
-                            style={{ cursor: 'pointer' }}
                         >
                             <h2>{t('courseInfo')}</h2>
                             <span className={`expand-icon ${showInfo ? 'rotated' : ''}`}>▼</span>

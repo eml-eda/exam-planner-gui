@@ -7,6 +7,7 @@ import './Home.css';
 import { initializeCourses } from '../utils/database';
 import { reloadCachesApi } from '../utils/api_calls';
 import { useConfig } from '../context/ConfigContext';
+import { getRecentCourses } from '../utils/recentCourses';
 
 
 const Home = () => {
@@ -14,7 +15,7 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showSettings, setShowSettings] = useState(false);
-    const { checkConfigUneq, forceRefreshPage } = useConfig();
+    const { config, checkConfigUneq, forceRefreshPage } = useConfig();
 
     // Format timestamp from ISO format to "HH:MM:SS DD/MM"
     const formatTimestamp = (timestamp) => {
@@ -36,6 +37,7 @@ const Home = () => {
     const [backendConfigError, setBackendConfigError] = useState(false);
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
+    const [recentCourses, setRecentCourses] = useState([]);
 
 
     const loadCourses = useCallback(async () => {
@@ -77,6 +79,12 @@ const Home = () => {
         loadCourses();
     }, [loadCourses]);
 
+    useEffect(() => {
+        // Load recently viewed courses from localStorage
+        const courses = getRecentCourses();
+        setRecentCourses(courses);
+    }, []);
+
     const handleBack = () => {
         if (window.history.length > 1) {
             navigate(-1);
@@ -106,12 +114,22 @@ const Home = () => {
 
 
                     {/* Language Toggle */}
-                    <button
-                        className="nav-btn language-btn"
-                        onClick={toggleLanguage}
-                    >
-                        {isEnglish ? t('english') : t('italian')}
-                    </button>
+                    <div className="language-toggle">
+                        <button
+                            className={`language-option ${!isEnglish ? 'active' : ''}`}
+                            onClick={() => !isEnglish || toggleLanguage()}
+                        >
+                            IT
+                        </button>
+                        <button
+                            className={`language-option ${isEnglish ? 'active' : ''}`}
+                            onClick={() => isEnglish || toggleLanguage()}
+                        >
+                            EN
+                        </button>
+                        <div className={`language-slider ${isEnglish ? 'en' : 'it'}`}></div>
+                    </div>
+
 
                     {/* Settings Button */}
                     <button
@@ -123,6 +141,11 @@ const Home = () => {
                         <span className="btn-icon">⚙️</span>
                         <span className="btn-text">{t('settings')}</span>
                     </button>
+                </div>
+
+                {/* Middle text */}
+                <div className="nav-middle">
+                    <h2 className="page-title">{t('exam_data')} {t('year')} {config?.year} {t('session')} {config?.name}</h2>
                 </div>
 
                 {/* Right side buttons */}
@@ -137,14 +160,15 @@ const Home = () => {
 
                     {/* Fetch Type Indicator */}
                     {!loadingCourses && fetchType && (
-                        <div
-                            className={`fetch-indicator ${fetchType}`}
-                            title={fetchType === 'from-cache' ? t('courses') + ' ' + t('dataFromCache') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '') : t('courses') + ' ' + t('freshlyQueriedData') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '')}
-                        >
-                            <span className="fetch-tooltip">
+                        <div className="fetch-container">
+                            <div
+                                className={`fetch-indicator ${fetchType}`}
+                                title={fetchType === 'from-cache' ? t('courses') + ' ' + t('dataFromCache') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '') : t('courses') + ' ' + t('freshlyQueriedData') + (fetchTime ? ` (${formatTimestamp(fetchTime)})` : '')}
+                            ></div>
+                            <p className="fetch-details">
                                 {fetchType === 'from-cache' ? t('courses') + ' ' + t('cached') : t('courses') + ' ' + t('fresh')}
                                 {fetchTime && <><br />{formatTimestamp(fetchTime)}</>}
-                            </span>
+                            </p>
                         </div>
                     )}
 
@@ -164,8 +188,28 @@ const Home = () => {
 
             {/* Main Content */}
             <div className="main-content">
-                <div className={`search-container ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { if (!locked) setSearching(false) }}>
-                    <SearchComponent setlocked={setlocked} isDisabled={loadingCourses} />
+                <div className={`search-container`} >
+                    <div className={`search-comp ${searching ? 'searching' : ''}`} onClick={() => { setSearching(true) }} onBlur={() => { if (!locked) setSearching(false) }}>
+                        <SearchComponent setlocked={setlocked} isDisabled={loadingCourses} />
+                    </div>
+                    {recentCourses.length > 0 && (
+                        <div className={`recently-searched ${searching ? 'searching' : ''}`}>
+                            <h3 className='recently-searched-title'>{t('recently_searched')}</h3>
+                            <div className="recent-courses-grid">
+                                {recentCourses.map((course) => (
+                                    <div
+                                        key={course.code}
+                                        className="recent-course-card"
+                                        onClick={() => navigate(`/course/${course.code}`)}
+                                    >
+                                        <div className="recent-course-header">
+                                            <p className="recent-course-title">{course.title} ({course.code})</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
