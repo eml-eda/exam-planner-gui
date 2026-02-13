@@ -5,6 +5,9 @@ const LanguageContext = createContext();
 
 // Translation object
 const translations = {
+    //Home
+    recently_searched: { en: 'Recent Searches: ', it: 'Ricerche Recenti: ' },
+
     // Navigation
     loading_courses: { en: 'Loading Database..', it: 'Caricamento Database...' },
     home: { en: 'Home', it: 'Home' },
@@ -21,10 +24,11 @@ const translations = {
     exams: { en: 'Exams', it: 'Esami' },
     refreshTextCourse: { en: 'Refresh the courses cache.', it: 'Aggiorna la cache dei corsi.' },
     refreshTextExam: { en: 'Refresh the exams cache.', it: 'Aggiorna la cache degli esami.' },
+    exam_data: { en: 'Exam Data for', it: 'Dati Esami per' },
 
     // Search
     wait_courses: { en: 'Please wait, loading courses...', it: 'Attendere, caricamento corsi...' },
-    search: { en: 'Search for Docente, Course, ....', it: 'Cerca Docente, Corso, ....' },
+    search: { en: 'Search for Professor, Course, or (e.g. Pagliari, 04KWQXQ)', it: 'Cerca Professore, Corso, o (es. Pagliari, 04KWQXQ)' },
     foundCourses: { en: 'Found Courses:', it: 'Corsi Trovati:' },
 
     // Course info
@@ -46,6 +50,7 @@ const translations = {
     description: { en: 'Description', it: 'Descrizione' },
     degreePrograms: { en: 'for Degrees Provided', it: 'per Lauree Fornite' },
     studentNumber: { en: 'Student Number', it: 'Numero Studenti' },
+    instance: { en: 'Instance', it: 'Istanza' },
     instances: { en: 'Instances', it: 'Istanze' },
 
     // Calendar
@@ -82,6 +87,12 @@ const translations = {
     endDate: { en: 'End Date', it: 'Data Fine' },
     save: { en: 'Save', it: 'Salva' },
     cancel: { en: 'Cancel', it: 'Annulla' },
+    examSessionConfiguration: { en: 'Exam Session Configuration', it: 'Configurazione Sessione Esami' },
+    year: { en: 'Year', it: 'Anno' },
+    session: { en: 'Session', it: 'Sessione' },
+    sessionName: { en: 'Session Name', it: 'Nome Sessione' },
+    configWarning: { en: 'Saving will reload backend server. Ensure no other users are active.', it: 'Salvare ricaricherà il server backend. Assicurarsi che nessun altro utente sia attivo.' },
+    reloadingBackend: { en: 'Now Reloading the back-end....', it: 'Ora ricaricando il back-end....' },
     syncDatabase: { en: 'Sync Database', it: 'Sincronizza Database' },
     syncDatabaseTitle: { en: 'Database Synchronization', it: 'Sincronizzazione Database' },
     checkAll: { en: 'Check All', it: 'Seleziona Tutto' },
