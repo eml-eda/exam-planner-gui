@@ -318,11 +318,18 @@
     gap: 12px;
 }
 
-.recent-course-card:hover {
+.recent-course-card:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.recent-course-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+    pointer-events: none;
 }
 
 .recent-course-header {

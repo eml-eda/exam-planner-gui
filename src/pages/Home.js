@@ -199,8 +199,8 @@ const Home = () => {
                                 {recentCourses.map((course) => (
                                     <div
                                         key={course.code}
-                                        className="recent-course-card"
-                                        onClick={() => navigate(`/course/${course.code}`)}
+                                        className={`recent-course-card ${loadingCourses ? 'disabled' : ''}`}
+                                        onClick={() => !loadingCourses && navigate(`/course/${course.code}`)}
                                     >
                                         <div className="recent-course-header">
                                             <p className="recent-course-title">{course.title} ({course.code})</p>
