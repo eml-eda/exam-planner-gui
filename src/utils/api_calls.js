@@ -1,8 +1,8 @@
 import axios from "axios";
 // const baseUrl = "http://maira.polito.it:8001";
 // const baseUrl = "https://maira.polito.it:8001";
-// const baseUrl = "http://127.0.0.1:8000";
-const baseUrl = "https://cas.polito.it/api/exams";
+const baseUrl = "http://127.0.0.1:8000";
+// const baseUrl = "https://cas.polito.it/api/exams";
 
 
 export const getExamsApi = async (courseCode) => {
@@ -52,12 +52,12 @@ export const getConfigApi = async () => {
 
 export const reloadDatabaseApi = async (year = null, name = null) => {
     try {
-        const params = {
+        const requestBody = {
             year: year,
             name: name
         };
 
-        const response = await axios.post(`${baseUrl}/reload_database`, null, { params });
+        const response = await axios.post(`${baseUrl}/reload_database`, requestBody);
         console.log(response.status);
         return response.data;
     } catch (error) {
@@ -65,6 +65,8 @@ export const reloadDatabaseApi = async (year = null, name = null) => {
         throw error;
     }
 };
+
+
 
 
 export const reloadCachesApi = async () => {
@@ -80,7 +82,8 @@ export const reloadCachesApi = async () => {
 
 export const syncDatabaseApi = async (keys) => {
     try {
-        const response = await axios.post(`${baseUrl}/sync_database`, keys);
+        const requestBody = { keys: keys };
+        const response = await axios.post(`${baseUrl}/sync_database`, requestBody);
         console.log(response.status);
         return response.data;
     } catch (error) {
@@ -88,3 +91,14 @@ export const syncDatabaseApi = async (keys) => {
         throw error;
     }
 };
+
+
+export const getLastSyncTimeApi = async (key) => {
+    try {
+        const response = await axios.get(`${baseUrl}/last_sync_time/${key}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching last sync time:", error);
+        throw error;
+    }
+}
