@@ -101,6 +101,12 @@ const translations = {
     syncing: { en: 'Syncing...', it: 'Sincronizzazione...' },
     syncSuccess: { en: 'Database synchronized successfully', it: 'Database sincronizzato con successo' },
     syncWarning: { en: 'Select the keys to synchronize from the backend server.', it: 'Seleziona i chiavi da sincronizzare dal server backend.' },
+    offeringsOutdatedWarning: {
+        en: 'The previous synchronization of the offerta.csv files was more than a month ago. Are you sure you want to sync the exams without the offerings?',
+        it: 'La precedente sincronizzazione dei file offerta.csv è stata più di un mese fa. Sei sicuro di voler sincronizzare gli esami senza le offerte?'
+    },
+    syncWithoutOfferings: { en: 'Sync without offerings', it: 'Sincronizza senza offerte' },
+    syncWithOfferings: { en: 'Sync with offerings', it: 'Sincronizza con offerte' },
 
     // Exam details
     examTime: { en: 'Exam Time', it: 'Orario Esame' },
