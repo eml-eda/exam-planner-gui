@@ -1,13 +1,13 @@
 import axios from "axios";
 // const baseUrl = "http://maira.polito.it:8001";
 // const baseUrl = "https://maira.polito.it:8001";
-// const baseUrl = "http://127.0.0.1:8000";
-const baseUrl = "https://cas.polito.it/api/exams";
+const baseUrl = "http://127.0.0.1:8000";
+// const baseUrl = "https://cas.polito.it/api/exams";
 
 
 export const getExamsApi = async (courseCode) => {
     try {
-        const response = await axios.get(`${baseUrl}/exams_apelli/${courseCode}`);
+        const response = await axios.get(`${baseUrl}/exams_appelli/${courseCode}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching exam data:", error);
@@ -65,8 +65,6 @@ export const reloadDatabaseApi = async (year = null, name = null) => {
         throw error;
     }
 };
-
-
 
 
 export const reloadCachesApi = async () => {
