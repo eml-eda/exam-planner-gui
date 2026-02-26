@@ -8,7 +8,7 @@ const ConfigContext = createContext();
 // Config provider component
 export const ConfigProvider = ({ children }) => {
     const navigate = useNavigate();
-    const [config, setConfig] = useState({ year: 2026, name: 'winter' });
+    const [config, setConfig] = useState({ year: 2026, name: 'winter', collegiList: [] });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastConfigCheck, setLastConfigCheck] = useState(null);
@@ -20,7 +20,7 @@ export const ConfigProvider = ({ children }) => {
             try {
                 setIsLoading(true);
                 const data = await getConfigApi();
-                setConfig({ year: data.year, name: data.name });
+                setConfig({ year: data.year, name: data.name, collegiList: data.collegi });
                 setError(null);
             } catch (err) {
                 console.error('Error fetching config:', err);
