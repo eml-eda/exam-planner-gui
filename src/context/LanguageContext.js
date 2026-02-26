@@ -108,6 +108,15 @@ const translations = {
     syncWithoutOfferings: { en: 'Sync without offerings', it: 'Sincronizza senza offerte' },
     syncWithOfferings: { en: 'Sync with offerings', it: 'Sincronizza con offerte' },
 
+    // Export modal
+    exportExams: { en: 'Export Exams', it: 'Esporta Esami' },
+    selectCollegi: { en: 'Select Collegi', it: 'Seleziona Collegi' },
+    export: { en: 'Export', it: 'Esporta' },
+    exporting: { en: 'Exporting...', it: 'Esportazione...' },
+    noCollegiSelected: { en: 'Please select at least one collegio', it: 'Seleziona almeno un collegio' },
+    exportFailed: { en: 'Export failed', it: 'Esportazione fallita' },
+    exportError: { en: 'Error exporting exams', it: 'Errore nell\'esportazione degli esami' },
+
     // Exam details
     examTime: { en: 'Exam Time', it: 'Orario Esame' },
     registeredStudents: { en: 'Registered Students', it: 'Studenti Iscritti' },
