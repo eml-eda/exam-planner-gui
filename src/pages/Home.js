@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
+import ExportModal from '../components/ExportModal';
 import './Home.css';
 import { initializeCourses } from '../utils/database';
 import { reloadCachesApi } from '../utils/api_calls';
@@ -15,6 +16,7 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showSettings, setShowSettings] = useState(false);
+    const [showExport, setShowExport] = useState(false);
     const { config, checkConfigUneq, forceRefreshPage } = useConfig();
 
     // Format timestamp from ISO format to "HH:MM:SS DD/MM"
@@ -30,6 +32,7 @@ const Home = () => {
     };
     const [searching, setSearching] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
+    const [exportHover, setExportHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
     const [loadingCourses, setLoadingCourses] = useState(true);
@@ -141,6 +144,17 @@ const Home = () => {
                         <span className="btn-icon">⚙️</span>
                         <span className="btn-text">{t('settings')}</span>
                     </button>
+
+                    {/* Export Button */}
+                    <button
+                        className={`nav-btn export-btn ${exportHover ? 'expanded' : ''}`}
+                        onMouseEnter={() => setExportHover(true)}
+                        onMouseLeave={() => setExportHover(false)}
+                        onClick={() => setShowExport(true)}
+                    >
+                        <span className="btn-icon">📊</span>
+                        <span className="btn-text">{t('exportExams')}</span>
+                    </button>
                 </div>
 
                 {/* Middle text */}
@@ -217,6 +231,13 @@ const Home = () => {
             {showSettings && (
                 <SettingsModal
                     onClose={() => setShowSettings(false)}
+                />
+            )}
+
+            {/* Export Modal */}
+            {showExport && (
+                <ExportModal
+                    onClose={() => setShowExport(false)}
                 />
             )}
 

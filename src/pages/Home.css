@@ -159,6 +159,30 @@
     margin-left: 8px;
 }
 
+/* Export Button Animation */
+.export-btn {
+    min-width: 48px;
+    justify-content: center;
+}
+
+.export-btn .btn-text {
+    opacity: 0;
+    width: 0;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.export-btn.expanded {
+    min-width: auto;
+}
+
+.export-btn.expanded .btn-text {
+    opacity: 1;
+    width: auto;
+    margin-left: 8px;
+}
+
 .btn-icon {
     display: flex;
     align-items: center;
