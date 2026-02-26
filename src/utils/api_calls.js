@@ -100,3 +100,33 @@ export const getLastSyncTimeApi = async (key) => {
         throw error;
     }
 }
+
+
+export const exportExamsApi = async (year, name, collegi) => {
+    try {
+        const requestBody = {
+            year: year,
+            name: name,
+            collegi: collegi
+        };
+        const response = await axios.post(`${baseUrl}/export_exams`, requestBody);
+        console.log(response.status);
+        return response.data;
+    } catch (error) {
+        console.error("Error exporting exams:", error);
+        throw error;
+    }
+};
+
+
+export const downloadFileApi = async (filename) => {
+    try {
+        const response = await axios.get(`${baseUrl}/download/${filename}`, {
+            responseType: 'blob'
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error downloading file:", error);
+        throw error;
+    }
+};
