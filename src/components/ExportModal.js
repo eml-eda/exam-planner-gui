@@ -19,7 +19,7 @@ const ExportModal = ({ onClose }) => {
     const [collegi, setCollegi] = useState(() => {
         const initialCollegi = {};
         for (const key of config.collegiList) {
-            initialCollegi[key] = false;
+            if (key !== 'N/A') initialCollegi[key] = false;
         }
         return initialCollegi;
     });
@@ -119,6 +119,7 @@ const ExportModal = ({ onClose }) => {
                                     className="date-input"
                                     disabled={isExporting}
                                 >
+                                    <option value="2024">2024</option>
                                     <option value="2025">2025</option>
                                     <option value="2026">2026</option>
                                 </select>
