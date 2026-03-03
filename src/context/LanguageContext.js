@@ -117,6 +117,28 @@ const translations = {
     exportFailed: { en: 'Export failed', it: 'Esportazione fallita' },
     exportError: { en: 'Error exporting exams', it: 'Errore nell\'esportazione degli esami' },
 
+    // Login modal
+    login: { en: 'Login', it: 'Accedi' },
+    loginButton: { en: 'Login', it: 'Accedi' },
+    loggingIn: { en: 'Logging in...', it: 'Accesso in corso...' },
+    logout: { en: 'Logout', it: 'Esci' },
+    currentUser: { en: 'Current User', it: 'Utente Corrente' },
+    username: { en: 'Username', it: 'Nome Utente' },
+    password: { en: 'Password', it: 'Password' },
+    enterUsername: { en: 'Enter username', it: 'Inserisci nome utente' },
+    enterPassword: { en: 'Enter password', it: 'Inserisci password' },
+    rememberMe: { en: 'Remember me', it: 'Ricordami' },
+    showPassword: { en: 'Show password', it: 'Mostra password' },
+    hidePassword: { en: 'Hide password', it: 'Nascondi password' },
+    credentialsRequired: { en: 'Username and password are required', it: 'Nome utente e password sono obbligatori' },
+    invalidCredentials: { en: 'Invalid username or password', it: 'Nome utente o password non validi' },
+    loginError: { en: 'Login error occurred', it: 'Si è verificato un errore di accesso' },
+    availableAccounts: { en: 'Available Accounts', it: 'Account Disponibili' },
+    fullAccess: { en: 'Full access (read, write, export, sync)', it: 'Accesso completo (lettura, scrittura, esportazione, sincronizzazione)' },
+    editAccess: { en: 'Read, write, and export', it: 'Lettura, scrittura ed esportazione' },
+    readOnlyAccess: { en: 'Read-only access', it: 'Accesso solo lettura' },
+    default: { en: 'default', it: 'predefinito' },
+
     // Exam details
     examTime: { en: 'Exam Time', it: 'Orario Esame' },
     registeredStudents: { en: 'Registered Students', it: 'Studenti Iscritti' },
@@ -128,6 +150,10 @@ const translations = {
 
     // Error messages
     error: { en: 'Error', it: 'Errore' },
+    close: { en: 'Close', it: 'Chiudi' },
+    goToHome: { en: 'Go to Home', it: 'Vai alla Home' },
+    authenticationRequired: { en: 'Authentication required. Please login with valid credentials.', it: 'Autenticazione richiesta. Effettua il login con credenziali valide.' },
+    permissionDenied: { en: 'Permission denied. You do not have the required permissions for this action.', it: 'Permesso negato. Non hai i permessi necessari per questa azione.' },
     backend_error_message: {
         en: 'Unable to load data. Please check your server availability and refresh the page.',
         it: 'Impossibile caricare i dati. Si prega di verificare la disponibilità del server e aggiornare la pagina.'
