@@ -183,6 +183,30 @@
     margin-left: 8px;
 }
 
+/* Login Button Animation */
+.login-btn {
+    min-width: 48px;
+    justify-content: center;
+}
+
+.login-btn .btn-text {
+    opacity: 0;
+    width: 0;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.login-btn.expanded {
+    min-width: auto;
+}
+
+.login-btn.expanded .btn-text {
+    opacity: 1;
+    width: auto;
+    margin-left: 8px;
+}
+
 .btn-icon {
     display: flex;
     align-items: center;

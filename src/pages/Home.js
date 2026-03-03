@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
 import ExportModal from '../components/ExportModal';
+import LoginModal from '../components/LoginModal';
+import CredErrorModal from '../components/CredErrorModal';
 import './Home.css';
 import { initializeCourses } from '../utils/database';
 import { reloadCachesApi } from '../utils/api_calls';
@@ -13,10 +16,12 @@ import { getRecentCourses } from '../utils/recentCourses';
 
 const Home = () => {
     const { isEnglish, toggleLanguage, t } = useLanguage();
+    const { getAuthHeader, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [showSettings, setShowSettings] = useState(false);
     const [showExport, setShowExport] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
     const { config, checkConfigUneq, forceRefreshPage } = useConfig();
 
     // Format timestamp from ISO format to "HH:MM:SS DD/MM"
@@ -33,10 +38,12 @@ const Home = () => {
     const [searching, setSearching] = useState(false);
     const [settingsHover, setSettingsHover] = useState(false);
     const [exportHover, setExportHover] = useState(false);
+    const [loginHover, setLoginHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [backendError, setBackendError] = useState(false);
+    const [credentialsError, setCredentialsError] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
@@ -69,10 +76,11 @@ const Home = () => {
                 forceRefreshPage();
                 return;
             }
-            await reloadCachesApi();
+            const authHeader = getAuthHeader();
+            await reloadCachesApi(authHeader);
             await loadCourses();
         } catch (error) {
-            setBackendError(true);
+            setCredentialsError(error);
             console.error('Error refreshing courses:', error);
             setLoadingCourses(false);
         }
@@ -154,6 +162,17 @@ const Home = () => {
                     >
                         <span className="btn-icon">📊</span>
                         <span className="btn-text">{t('exportExams')}</span>
+                    </button>
+
+                    {/* Login Button */}
+                    <button
+                        className={`nav-btn login-btn ${loginHover ? 'expanded' : ''}`}
+                        onMouseEnter={() => setLoginHover(true)}
+                        onMouseLeave={() => setLoginHover(false)}
+                        onClick={() => setShowLogin(true)}
+                    >
+                        <span className="btn-icon">👤</span>
+                        <span className="btn-text">{user?.username}</span>
                     </button>
                 </div>
 
@@ -241,6 +260,13 @@ const Home = () => {
                 />
             )}
 
+            {/* Login Modal */}
+            {showLogin && (
+                <LoginModal
+                    onClose={() => setShowLogin(false)}
+                />
+            )}
+
             {/* Backend Error Loading Modal */}
             {backendError && (
                 <div className="error-modal-overlay">
@@ -253,6 +279,15 @@ const Home = () => {
                     </div>
                 </div>
             )}
+
+            {/* Credential Error Modal */}
+            <CredErrorModal
+                isOpen={!!credentialsError}
+                onClose={() => setCredentialsError(null)}
+                error={credentialsError}
+                showLoginButton={true}
+                onLoginClick={() => setShowLogin(true)}
+            />
 
             {/* Backend Error Config Modal */}
             {backendConfigError && (
