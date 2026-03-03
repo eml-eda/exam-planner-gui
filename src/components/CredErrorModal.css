@@ -1,0 +1,171 @@
+/* Error Modal Overlay */
+.error-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(30, 30, 30, 0.85));
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: errorOverlayFadeIn 0.3s ease-out;
+}
+
+@keyframes errorOverlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Error Modal Content */
+.error-modal {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    padding: 40px 35px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow:
+        0 20px 60px rgba(211, 47, 47, 0.3),
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    text-align: center;
+    animation: errorSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    border: 1px solid rgba(211, 47, 47, 0.1);
+}
+
+@keyframes errorSlideIn {
+    from {
+        transform: translateY(-30px) scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Error Icon */
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: errorIconPulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(211, 47, 47, 0.3));
+}
+
+@keyframes errorIconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Error Title */
+.error-title {
+    background: linear-gradient(135deg, #d32f2f, #c62828);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 28px;
+    margin: 0 0 20px 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Error Message */
+.error-message {
+    color: #424242;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 24px 0 !important;
+    font-weight: 400;
+}
+
+/* Error Modal Actions */
+.error-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Login/Action Button */
+.btn-login-error {
+    background: rgba(99, 102, 241, 0.9);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-login-error:hover {
+    background: rgba(99, 102, 241, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+}
+
+.btn-login-error:active {
+    transform: translateY(0);
+}
+
+/* Secondary Button (Close) */
+.error-modal-actions .btn-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #424242;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.error-modal-actions .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.error-modal-actions .btn-secondary:active {
+    transform: scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .error-modal {
+        padding: 32px 24px;
+        max-width: 90%;
+    }
+
+    .error-icon {
+        font-size: 48px;
+    }
+
+    .error-title {
+        font-size: 24px;
+    }
+
+    .error-message {
+        font-size: 14px;
+    }
+}
