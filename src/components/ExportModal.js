@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { useConfig } from '../context/ConfigContext';
 import { exportExamsApi, downloadFileApi } from '../utils/api_calls';
 import './ExportModal.css';
 
 const ExportModal = ({ onClose }) => {
     const { t } = useLanguage();
+    const { getAuthHeader } = useAuth();
     const { config } = useConfig();
     const [year, setYear] = useState('2026');
     const [sessionName, setSessionName] = useState('winter');
@@ -52,14 +54,16 @@ const ExportModal = ({ onClose }) => {
         }
 
         try {
+            const authHeader = getAuthHeader();
+            
             // Step 1: Export exams
-            const exportResponse = await exportExamsApi(year, sessionName, selectedCollegi);
+            const exportResponse = await exportExamsApi(year, sessionName, selectedCollegi, authHeader);
 
             if (exportResponse.status === 'success' && exportResponse.filename) {
                 setSuccessMessage(exportResponse.message);
 
                 // Step 2: Download the file
-                const blob = await downloadFileApi(exportResponse.filename);
+                const blob = await downloadFileApi(exportResponse.filename, authHeader);
 
                 // Create a download link and trigger it
                 const url = window.URL.createObjectURL(blob);
@@ -80,7 +84,16 @@ const ExportModal = ({ onClose }) => {
             }
         } catch (err) {
             console.error('Error exporting exams:', err);
-            setError(t('exportError') + ': ' + (err.response?.data?.detail || err.message));
+            const status = err.response?.status;
+            const detail = err.response?.data?.detail;
+            
+            if (status === 401) {
+                setError(detail || t('authenticationRequired'));
+            } else if (status === 403) {
+                setError(detail || t('permissionDenied'));
+            } else {
+                setError(t('exportError') + ': ' + (detail || err.message));
+            }
         } finally {
             setIsExporting(false);
         }
