@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { useConfig } from '../context/ConfigContext';
 import { reloadDatabaseApi, syncDatabaseApi, getLastSyncTimeApi } from '../utils/api_calls';
 import './SettingsModal.css';
 
 const SettingsModal = ({ onClose }) => {
     const { t } = useLanguage();
+    const { getAuthHeader } = useAuth();
     const { config, updateConfig } = useConfig();
     const navigate = useNavigate();
     const [year, setYear] = useState('2026');
@@ -40,7 +42,8 @@ const SettingsModal = ({ onClose }) => {
         setSuccessMessage(null);
 
         try {
-            const response = await reloadDatabaseApi(parseInt(year), sessionName);
+            const authHeader = getAuthHeader();
+            const response = await reloadDatabaseApi(parseInt(year), sessionName, authHeader);
 
             // Update config context on success
             updateConfig({ year: parseInt(year), name: sessionName });
@@ -52,10 +55,15 @@ const SettingsModal = ({ onClose }) => {
                 window.location.reload();
             }, 500);
         } catch (err) {
+            const status = err.response?.status;
             const errorDetail = err.response?.data?.detail;
             let errorMessage = 'Failed to reload database';
 
-            if (typeof errorDetail === 'string') {
+            if (status === 401) {
+                errorMessage = errorDetail || t('authenticationRequired');
+            } else if (status === 403) {
+                errorMessage = errorDetail || t('permissionDenied');
+            } else if (typeof errorDetail === 'string') {
                 errorMessage = errorDetail;
             } else if (Array.isArray(errorDetail)) {
                 errorMessage = errorDetail.map(e => e.msg || JSON.stringify(e)).join(', ');
@@ -156,7 +164,8 @@ const SettingsModal = ({ onClose }) => {
         setSyncSuccessMessage(null);
 
         try {
-            const response = await syncDatabaseApi(selectedKeys);
+            const authHeader = getAuthHeader();
+            const response = await syncDatabaseApi(selectedKeys, authHeader);
             setSyncSuccessMessage(response.message || t('syncSuccess'));
 
             // Reset checkboxes after successful sync
@@ -173,10 +182,15 @@ const SettingsModal = ({ onClose }) => {
                 window.location.reload();
             }, 2500);
         } catch (err) {
+            const status = err.response?.status;
             const errorDetail = err.response?.data?.detail;
             let errorMessage = 'Failed to sync database';
 
-            if (typeof errorDetail === 'string') {
+            if (status === 401) {
+                errorMessage = errorDetail || t('authenticationRequired');
+            } else if (status === 403) {
+                errorMessage = errorDetail || t('permissionDenied');
+            } else if (typeof errorDetail === 'string') {
                 errorMessage = errorDetail;
             } else if (Array.isArray(errorDetail)) {
                 errorMessage = errorDetail.map(e => e.msg || JSON.stringify(e)).join(', ');
