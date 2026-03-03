@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { getCourseById } from '../utils/database';
 import SearchComponent from '../components/SearchComponent';
 import SettingsModal from '../components/SettingsModal';
+import CredErrorModal from '../components/CredErrorModal';
 import CalendarView from '../components/CalendarView';
 import './Course.css';
 import { getExamsApi, clearExamCacheApi } from '../utils/api_calls';
@@ -14,6 +16,7 @@ const Course = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const { isEnglish, toggleLanguage, t } = useLanguage();
+    const { getAuthHeader } = useAuth();
     const [course, setCourse] = useState(null);
 
     // Format timestamp from ISO format to "HH:MM:SS DD/MM"
@@ -37,6 +40,7 @@ const Course = () => {
     const [apiLoading, setApiLoading] = useState(true);
     const [examConflicts, setExamConflicts] = useState([]);
     const [backendError, setBackendError] = useState(false);
+    const [credentialsError, setCredentialsError] = useState(null);
     const [fetchType, setFetchType] = useState(null);
     const [fetchTime, setFetchTime] = useState(null);
     const [backendConfigError, setBackendConfigError] = useState(false);
@@ -109,10 +113,11 @@ const Course = () => {
         try {
             setApiLoading(true);
             await checkAndHandleConfig();
-            await clearExamCacheApi(courseId);
+            const authHeader = getAuthHeader();
+            await clearExamCacheApi(courseId, authHeader);
             await getExams();
         } catch (error) {
-            setBackendError(true);
+            setCredentialsError(error);
             console.error('Error refreshing exams:', error);
             setApiLoading(false);
         }
@@ -418,6 +423,14 @@ const Course = () => {
                     </div>
                 </div>
             )}
+
+            {/* Error Modal */}
+            <CredErrorModal
+                isOpen={!!credentialsError}
+                onClose={() => setCredentialsError(null)}
+                error={credentialsError}
+                showHomeButton={true}
+            />
 
             {/* Backend Error Config Modal */}
             {backendConfigError && (
