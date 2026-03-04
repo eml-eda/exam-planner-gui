@@ -43,8 +43,7 @@ export const AuthProvider = ({ children }) => {
             // Set default viewer credentials
             setUser({
                 username: 'viewer',
-                password: 'view123',
-                permissions: ['read']
+                password: 'viewpolito123'
             });
             setIsAuthenticated(true);
         }
@@ -54,9 +53,9 @@ export const AuthProvider = ({ children }) => {
         try {
             const credentials = btoa(`${username}:${password}`);
             const authHeader = `Basic ${credentials}`;
-            
+
             const response = await checkCredentialsApi(authHeader);
-            
+
             if (response.status === 'success') {
                 const userData = {
                     username: response.username,
@@ -75,15 +74,15 @@ export const AuthProvider = ({ children }) => {
 
                 return { success: true };
             }
-            
+
             return { success: false, error: 'Invalid credentials' };
         } catch (error) {
             console.error('Login verification error:', error);
-            return { 
-                success: false, 
-                error: error.response?.status === 401 
-                    ? 'Invalid credentials' 
-                    : 'Connection error' 
+            return {
+                success: false,
+                error: error.response?.status === 401
+                    ? 'Invalid credentials'
+                    : 'Connection error'
             };
         }
     };
@@ -96,8 +95,7 @@ export const AuthProvider = ({ children }) => {
         // Reset to default viewer
         setUser({
             username: 'viewer',
-            password: 'view123',
-            permissions: ['read']
+            password: 'viewpolito123',
         });
         setIsAuthenticated(true);
 
