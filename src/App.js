@@ -1,11 +1,23 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ConfigProvider } from './context/ConfigContext';
 import Home from './pages/Home';
 import Course from './pages/Course';
+import Login from './pages/Login';
 import './index.css';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+    const { isAuthenticated } = useAuth();
+    
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+    
+    return children;
+};
 
 function App() {
     return (
@@ -15,8 +27,23 @@ function App() {
                     <LanguageProvider>
                         <div className="App">
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/course/:courseId" element={<Course />} />
+                                <Route path="/login" element={<Login />} />
+                                <Route 
+                                    path="/" 
+                                    element={
+                                        <ProtectedRoute>
+                                            <Home />
+                                        </ProtectedRoute>
+                                    } 
+                                />
+                                <Route 
+                                    path="/course/:courseId" 
+                                    element={
+                                        <ProtectedRoute>
+                                            <Course />
+                                        </ProtectedRoute>
+                                    } 
+                                />
                             </Routes>
                         </div>
                     </LanguageProvider>
