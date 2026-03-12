@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Initialize with default viewer credentials or from cookie
+    // Initialize from cookie if available
     useEffect(() => {
         const savedUsername = getCookie('auth_username');
         const savedPassword = getCookie('auth_password');
@@ -39,13 +39,6 @@ export const AuthProvider = ({ children }) => {
         if (savedUsername && savedPassword) {
             // Restore from cookie and verify
             verifyAndLogin(savedUsername, savedPassword, false);
-        } else {
-            // Set default viewer credentials
-            setUser({
-                username: 'viewer',
-                password: 'viewpolito123'
-            });
-            setIsAuthenticated(true);
         }
     }, []);
 
@@ -92,12 +85,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        // Reset to default viewer
-        setUser({
-            username: 'viewer',
-            password: 'viewpolito123',
-        });
-        setIsAuthenticated(true);
+        // Clear user and authentication
+        setUser(null);
+        setIsAuthenticated(false);
 
         // Clear cookies
         deleteCookie('auth_username');
