@@ -52,10 +52,10 @@ const LoginModal = ({ onClose }) => {
         setUsername('');
         setPassword('');
         setError(null);
+        onClose();
         setTimeout(() => {
-            navigate('/');
-            window.location.reload();
-        }, 500);
+            navigate('/login');
+        }, 100);
     };
 
     return (
@@ -74,18 +74,20 @@ const LoginModal = ({ onClose }) => {
 
                 <div className="modal-body">
                     <form onSubmit={handleLogin}>
-                        <div className="current-user-info">
-                            <p className="current-user-label">{t('currentUser')}:</p>
-                            <p className="current-user-name">{user?.username}</p>
-                            <button
-                                type="button"
-                                className="btn btn-logout"
-                                onClick={handleLogout}
-                                disabled={isLoggingIn}
-                            >
-                                {t('logout')}
-                            </button>
-                        </div>
+                        {user && (
+                            <div className="current-user-info">
+                                <p className="current-user-label">{t('currentUser')}:</p>
+                                <p className="current-user-name">{user.username}</p>
+                                <button
+                                    type="button"
+                                    className="btn btn-logout"
+                                    onClick={handleLogout}
+                                    disabled={isLoggingIn}
+                                >
+                                    {t('logout')}
+                                </button>
+                            </div>
+                        )}
 
                         <div className="input-group">
                             <label htmlFor="username">{t('username')}</label>
