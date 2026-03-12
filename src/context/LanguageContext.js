@@ -25,6 +25,7 @@ const translations = {
     refreshTextCourse: { en: 'Refresh the courses cache.', it: 'Aggiorna la cache dei corsi.' },
     refreshTextExam: { en: 'Refresh the exams cache.', it: 'Aggiorna la cache degli esami.' },
     exam_data: { en: 'Exam Data for', it: 'Dati Esami per' },
+    exam_sched: { en: 'Exam Schedular', it: 'Calendario Esami' },
 
     // Search
     wait_courses: { en: 'Please wait, loading courses...', it: 'Attendere, caricamento corsi...' },
