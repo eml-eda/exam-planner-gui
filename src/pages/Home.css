@@ -220,26 +220,34 @@
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(var(--backdrop-blur));
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 25px;
     padding: 4px;
     height: 50px;
+    width: 100px;
 }
 
 .language-option {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
     z-index: 2;
     background: transparent;
     border: none;
-    padding: 10px 20px;
+    padding: 0;
     cursor: pointer;
     font-weight: 600;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.6);
     transition: color 0.3s ease;
-    min-width: 50px;
+    min-width: 40px;
     border-radius: 20px;
 }
 
@@ -249,10 +257,10 @@
 
 .language-slider {
     position: absolute;
-    top: 3px;
+    top: 4px;
     left: 4px;
-    width: 54px;
-    height: 42px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
     background: rgba(255, 255, 255, 0.3);
     border-radius: 20px;
     transition: transform 0.3s ease;
@@ -260,8 +268,9 @@
 }
 
 .language-slider.en {
-    transform: translateX(56px);
+    transform: translateX(100%);
 }
+
 
 /* Refresh Button */
 .refresh-btn {
