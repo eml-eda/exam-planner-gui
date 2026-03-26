@@ -4,26 +4,54 @@ import { checkCredentialsApi } from '../utils/api_calls';
 // Create the auth context
 const AuthContext = createContext();
 
-// Helper functions for cookie management
-const setCookie = (name, value, days = 7) => {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-};
+const AUTH_STORAGE_KEY = 'auth_user';
+const REMEMBER_ME_TTL_MS = 7 * 24 * 60 * 60 * 1000;  // 1 week in milliseconds
 
-const getCookie = (name) => {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+const saveAuthToStorage = (userData, rememberMe) => {
+    const payload = JSON.stringify({
+        ...userData,
+        rememberMe,
+        expiresAt: rememberMe ? Date.now() + REMEMBER_ME_TTL_MS : null
+    });
+
+    // Keep a single source of truth across storages.
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+
+    if (rememberMe) {
+        localStorage.setItem(AUTH_STORAGE_KEY, payload);
+        return;
     }
-    return null;
+
+    sessionStorage.setItem(AUTH_STORAGE_KEY, payload);
 };
 
-const deleteCookie = (name) => {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+const getAuthFromStorage = () => {
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY) || sessionStorage.getItem(AUTH_STORAGE_KEY);
+    if (!stored) return null;
+
+    try {
+        const parsed = JSON.parse(stored);
+
+        // Enforce 1-week expiration for persisted "remember me" logins.
+        if (parsed?.rememberMe) {
+            const isExpired = !parsed.expiresAt || Date.now() > parsed.expiresAt;
+            if (isExpired) {
+                clearAuthStorage();
+                return null;
+            }
+        }
+
+        return parsed;
+    } catch {
+        clearAuthStorage();
+        return null;
+    }
+};
+
+const clearAuthStorage = () => {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
 };
 
 // Auth provider component
@@ -31,14 +59,13 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Initialize from cookie if available
+    // Initialize from storage if available
     useEffect(() => {
-        const savedUsername = getCookie('auth_username');
-        const savedPassword = getCookie('auth_password');
+        const savedUser = getAuthFromStorage();
 
-        if (savedUsername && savedPassword) {
-            // Restore from cookie and verify
-            verifyAndLogin(savedUsername, savedPassword, false);
+        if (savedUser?.username && savedUser?.password) {
+            // Restore from storage and verify
+            verifyAndLogin(savedUser.username, savedUser.password, !!savedUser.rememberMe);
         }
     }, []);
 
@@ -59,11 +86,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(userData);
                 setIsAuthenticated(true);
 
-                // Save to cookie if remember me is checked
-                if (rememberMe) {
-                    setCookie('auth_username', username, 7);
-                    setCookie('auth_password', password, 7);
-                }
+                saveAuthToStorage(userData, rememberMe);
 
                 return { success: true };
             }
@@ -89,9 +112,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setIsAuthenticated(false);
 
-        // Clear cookies
-        deleteCookie('auth_username');
-        deleteCookie('auth_password');
+        clearAuthStorage();
     };
 
     const getAuthHeader = () => {
