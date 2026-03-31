@@ -1,21 +1,53 @@
-# Exams App
+# University Exam Schedule Organizer GUI
 
-Exams App is a React frontend for browsing university exam sessions and conflicts.
-It connects to a backend API for authentication, data loading, synchronization, and export tasks.
-
-## What this project does
-
-- Course search by name, code, and instructor
-- Course detail view with exam conflict calendar
-- English and Italian interface
-- Login with role-based permissions
-- Session configuration and backend sync tools
-- Export of exam data files
+React application for viewing university exam schedules, conflicts, and course details.
 
 ## Documentation
 
-Detailed technical documentation is available in [doc/PROJECT_DOCUMENTATION.md](doc/PROJECT_DOCUMENTATION.md).
+Detailed project and backend documentation:
+- [doc/PROJECT_DOCUMENTATION.md](doc/PROJECT_DOCUMENTATION.md)
 
+## Features
+
+### Modern UI
+- Glass-morphism inspired interface
+- Smooth transitions and hover interactions
+
+### Language support
+- English and Italian UI
+- Instant language switching
+- Centralized translations
+
+### Search
+- Real-time course search
+- Match by course name, course code, and instructor
+- Highlighted matches with quick navigation to course page
+
+### Exam calendar and conflicts
+- Weekly calendar grouped by month
+- Three views: full, compact, timed
+- Color-coded exams:
+	- Green: current course
+	- Yellow: conflict in same year
+	- Red: major conflict (same semester)
+	- Neutral: no relevant conflict
+- Tooltip with exam type, time, and conflict counters
+
+### Course information
+- Collapsible sections
+- Course metadata and instances
+- Active/new student counts
+
+### Configuration, sync, and export
+- Session configuration (year and session name)
+- Cache/database reload actions
+- Selective backend synchronization
+- Excel export by selected collegi
+
+### Authentication and permissions
+- Login with Basic auth
+- Role-based permissions (admin, editor, viewer)
+- Protected routes and authenticated operations
 
 ## Tech stack
 
@@ -24,42 +56,37 @@ Detailed technical documentation is available in [doc/PROJECT_DOCUMENTATION.md](
 - Axios
 - CSS
 
-## Quick start
+## Installation and setup
 
 Prerequisites:
 - Node.js 18+
 - npm
 
-Run locally:
+Install and run:
 
 ```bash
 npm install
 npm start
 ```
 
-Create production build:
+Build for production:
 
 ```bash
 npm run build
 ```
 
-## Deployment on GitHub Pages
+## Deployment
 
-This repository is configured with GitHub Actions in [.github/workflows/static.yml](.github/workflows/static.yml).
-
-On each push to main, the workflow:
-1. Installs dependencies
-2. Builds the React app
-3. Uploads the build output
-4. Deploys to GitHub Pages
+GitHub Actions automatically builds and deploys the app to GitHub Pages on push to main.
+Workflow file: [.github/workflows/static.yml](.github/workflows/static.yml).
 
 ## Project structure
 
-- [.github/workflows](.github/workflows): CI/CD workflows
-- [public](public): static assets and CSV data files
-- [src](src): application source code
+- [src](src): React app source code
 - [src/components](src/components): reusable UI components and modals
-- [src/pages](src/pages): route-level pages
-- [src/context](src/context): global state providers
-- [src/utils](src/utils): API and local utility helpers
-- [doc](doc): project documentation
+- [src/pages](src/pages): page-level views
+- [src/context](src/context): global state (auth, config, language)
+- [src/utils](src/utils): API and utility modules
+- [public](public): static assets and CSV data files
+- [.github/workflows](.github/workflows): CI/CD workflow definitions
+- [doc](doc): full technical documentation
