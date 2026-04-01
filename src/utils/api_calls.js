@@ -1,8 +1,8 @@
 import axios from "axios";
 // const baseUrl = "http://maira.polito.it:8001";
 // const baseUrl = "https://maira.polito.it:8001";
-// const baseUrl = "http://127.0.0.1:8000";
-const baseUrl = "https://cas.polito.it/api/exams";
+const baseUrl = "http://127.0.0.1:8000";
+// const baseUrl = "https://cas.polito.it/api/exams";
 
 
 export const getExamsApi = async (courseCode) => {
