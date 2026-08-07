@@ -39,6 +39,7 @@ const Home = () => {
     const [settingsHover, setSettingsHover] = useState(false);
     const [exportHover, setExportHover] = useState(false);
     const [loginHover, setLoginHover] = useState(false);
+    const [agentHover, setAgentHover] = useState(false);
     const [backHover, setBackHover] = useState(false);
     const [locked, setlocked] = useState(false);
     const [loadingCourses, setLoadingCourses] = useState(true);
@@ -173,6 +174,16 @@ const Home = () => {
                     >
                         <span className="btn-icon">👤</span>
                         <span className="btn-text">{user?.username}</span>
+                    </button>
+
+                    <button
+                        className={`nav-btn agent-btn ${agentHover ? 'expanded' : ''}`}
+                        onMouseEnter={() => setAgentHover(true)}
+                        onMouseLeave={() => setAgentHover(false)}
+                        onClick={() => navigate('/agent')}
+                    >
+                        <span className="btn-icon">🤖</span>
+                        <span className="btn-text">Agent</span>
                     </button>
                 </div>
 
