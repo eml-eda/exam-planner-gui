@@ -6,6 +6,7 @@ import { ConfigProvider } from './context/ConfigContext';
 import Home from './pages/Home';
 import Course from './pages/Course';
 import Login from './pages/Login';
+import Agent from './pages/Agent';
 import './index.css';
 
 // Protected Route Component
@@ -43,6 +44,14 @@ function App() {
                                             <Course />
                                         </ProtectedRoute>
                                     } 
+                                />
+                                <Route
+                                    path="/agent"
+                                    element={
+                                        <ProtectedRoute>
+                                            <Agent />
+                                        </ProtectedRoute>
+                                    }
                                 />
                             </Routes>
                         </div>
