@@ -1,6 +1,6 @@
 import axios from "axios";
-// const baseUrl = "http://127.0.0.1:8000";   // for development
-const baseUrl = "https://cas.polito.it/api/exams";  // for production
+const baseUrl = "http://127.0.0.1:8000";   // for development
+// const baseUrl = "https://cas.polito.it/api/exams";  // for production
 
 
 export const getExamsApi = async (courseCode) => {
@@ -146,4 +146,24 @@ export const checkCredentialsApi = async (authHeader) => {
         console.error("Error checking credentials:", error);
         throw error;
     }
+};
+
+
+export const runAgentStreamApi = async ({ phaseNumber, emailText, authHeader = null, signal = null }) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(authHeader ? { Authorization: authHeader } : {})
+    };
+
+    const response = await fetch(`${baseUrl}/agent/run/stream`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+            phase_number: phaseNumber,
+            email_text: emailText
+        }),
+        signal
+    });
+
+    return response;
 };
