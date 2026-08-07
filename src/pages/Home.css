@@ -23,20 +23,8 @@
 }
 
 
-.nav-left {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.nav-middle {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
+.nav-left,
+.nav-middle,
 .nav-right {
     height: 50px;
     display: flex;
@@ -111,84 +99,20 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Back Button Animation */
-.back-btn {
-    height: 50px;
-    justify-content: center;
-}
-
-.back-btn .btn-text {
-    opacity: 0;
-    width: 0;
-    transition: var(--transition-smooth);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.back-btn.expanded {
-    min-width: auto;
-}
-
-.back-btn.expanded .btn-text {
-    opacity: 1;
-    width: auto;
-    margin-left: 8px;
-}
-
-/* Settings Button Animation */
-.settings-btn {
-    min-width: 48px;
-    justify-content: center;
-}
-
-.settings-btn .btn-text {
-    opacity: 0;
-    width: 0;
-    transition: var(--transition-smooth);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.settings-btn.expanded {
-    min-width: auto;
-}
-
-.settings-btn.expanded .btn-text {
-    opacity: 1;
-    width: auto;
-    margin-left: 8px;
-}
-
-/* Export Button Animation */
-.export-btn {
-    min-width: 48px;
-    justify-content: center;
-}
-
-.export-btn .btn-text {
-    opacity: 0;
-    width: 0;
-    transition: var(--transition-smooth);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.export-btn.expanded {
-    min-width: auto;
-}
-
-.export-btn.expanded .btn-text {
-    opacity: 1;
-    width: auto;
-    margin-left: 8px;
-}
-
-/* Login Button Animation */
+/* Back, Settings, Export, Agent, Login Button Animation */
+.back-btn,
+.settings-btn,
+.export-btn,
+.agent-btn,
 .login-btn {
     min-width: 48px;
     justify-content: center;
 }
 
+.back-btn .btn-text,
+.settings-btn .btn-text,
+.export-btn .btn-text,
+.agent-btn .btn-text,
 .login-btn .btn-text {
     opacity: 0;
     width: 0;
@@ -197,10 +121,18 @@
     overflow: hidden;
 }
 
+.back-btn.expanded,
+.settings-btn.expanded,
+.export-btn.expanded,
+.agent-btn.expanded,
 .login-btn.expanded {
     min-width: auto;
 }
 
+.back-btn.expanded .btn-text,
+.settings-btn.expanded .btn-text,
+.export-btn.expanded .btn-text,
+.agent-btn.expanded .btn-text,
 .login-btn.expanded .btn-text {
     opacity: 1;
     width: auto;
@@ -497,6 +429,13 @@
 
     .back-btn .btn-text,
     .settings-btn .btn-text {
+        display: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+    }
+
+    .agent-btn .btn-text,
+    .login-btn .btn-text {
         display: none !important;
         opacity: 0 !important;
         width: 0 !important;
