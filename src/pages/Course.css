@@ -67,36 +67,14 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Back Button Animation */
-.back-btn {
-    min-width: 48px;
-    justify-content: center;
-}
-
-.back-btn .btn-text {
-    opacity: 0;
-    width: 0;
-    transition: var(--transition-smooth);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.back-btn.expanded {
-    min-width: auto;
-}
-
-.back-btn.expanded .btn-text {
-    opacity: 1;
-    width: auto;
-    margin-left: 8px;
-}
-
-/* Settings Button Animation */
+/* Back, Settings Button Animation */
+.back-btn,
 .settings-btn {
     min-width: 48px;
     justify-content: center;
 }
 
+.back-btn .btn-text,
 .settings-btn .btn-text {
     opacity: 0;
     width: 0;
@@ -105,10 +83,12 @@
     overflow: hidden;
 }
 
+.back-btn.expanded,
 .settings-btn.expanded {
     min-width: auto;
 }
 
+.back-btn.expanded .btn-text,
 .settings-btn.expanded .btn-text {
     opacity: 1;
     width: auto;
