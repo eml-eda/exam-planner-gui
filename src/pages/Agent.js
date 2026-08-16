@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +9,7 @@ import './Agent.css';
 const initialPanels = {
     input: false,
     stream: false,
-    details: false
+    details: true
 };
 
 const parseSseBlock = (block) => {
@@ -43,6 +43,62 @@ const parseSseBlock = (block) => {
     };
 };
 
+const splitStreamEntry = (entry) => {
+    const data = entry.data;
+
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        return {
+            frontEndEntry: null,
+            detailEntry: {
+                ...entry,
+                data
+            }
+        };
+    }
+
+    const dataKeys = Object.keys(data);
+    const wrapperKey = dataKeys.length === 1 ? dataKeys[0] : null;
+    const payload = wrapperKey && data[wrapperKey] && typeof data[wrapperKey] === 'object' && !Array.isArray(data[wrapperKey])
+        ? data[wrapperKey]
+        : data;
+
+    if (!Object.prototype.hasOwnProperty.call(payload, 'front_end_result')) {
+        return {
+            frontEndEntry: null,
+            detailEntry: {
+                ...entry,
+                data
+            }
+        };
+    }
+
+    const {
+        front_end_result: frontEndResult,
+        ...detailData
+    } = payload;
+
+    const detailPayload = wrapperKey
+        ? {
+            [wrapperKey]: detailData
+        }
+        : detailData;
+
+    return {
+        frontEndEntry: {
+            ...entry,
+            data: {
+                front_end_result: frontEndResult
+            }
+        },
+        detailEntry: Object.keys(detailData).length > 0
+            ? {
+                ...entry,
+                data: detailPayload
+            }
+            : null
+    };
+};
+
 const Agent = () => {
     const navigate = useNavigate();
     const { isEnglish, toggleLanguage, t } = useLanguage();
@@ -53,6 +109,8 @@ const Agent = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [error, setError] = useState(null);
     const [streamEvents, setStreamEvents] = useState([]);
+    const [streamFrontEnd, setStreamFrontEnd] = useState([]);
+    const [streamDetails, setStreamDetails] = useState([]);
     const [collapsedPanels, setCollapsedPanels] = useState(initialPanels);
 
     const handleBack = () => {
@@ -72,14 +130,6 @@ const Agent = () => {
         }
     };
 
-    const appendStreamEvent = (entry) => {
-        setStreamEvents((current) => [...current, {
-            id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-            timestamp: new Date().toISOString(),
-            ...entry
-        }]);
-    };
-
     const handlePhaseChange = (phase) => {
         setSelectedPhase(phase);
     };
@@ -91,6 +141,32 @@ const Agent = () => {
         }));
     };
 
+    const appendStreamEvent = (entry) => {
+        const { frontEndEntry, detailEntry } = splitStreamEntry(entry);
+
+        setStreamEvents((current) => [...current, {
+            id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            timestamp: new Date().toISOString(),
+            ...entry
+        }]);
+
+        if (frontEndEntry) {
+            setStreamFrontEnd((current) => [...current, {
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                timestamp: new Date().toISOString(),
+                ...frontEndEntry
+            }]);
+        }
+
+        if (detailEntry) {
+            setStreamDetails((current) => [...current, {
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                timestamp: new Date().toISOString(),
+                ...detailEntry
+            }]);
+        }
+    };
+
     const handleRunAgent = async () => {
         if (!emailText.trim()) {
             setError('Paste or type the email text before running the agent.');
@@ -100,6 +176,8 @@ const Agent = () => {
         setIsRunning(true);
         setError(null);
         setStreamEvents([]);
+        setStreamFrontEnd([]);
+        setStreamDetails([]);
 
         try {
             const authHeader = getAuthHeader();
@@ -159,11 +237,38 @@ const Agent = () => {
         }
     };
 
-    const renderStreamEntry = (entry) => JSON.stringify({
-        event: entry.event,
-        timestamp: entry.timestamp,
-        data: entry.data
-    }, null, 2);
+    const renderStreamFrontEnd = (entry) => {
+        let frontEndText = String(entry?.data?.front_end_result ?? '');
+        const isImportant = frontEndText.startsWith("!important");
+        if (isImportant) {
+            frontEndText = frontEndText.slice("!important".length);
+        }
+
+        return (
+            <div className={`front-end-card ${isImportant ? 'important' : ''}`}>
+                <div className="front-end-card-header">
+                    <span className="front-end-card-timestamp">{entry.timestamp}</span>
+                </div>
+                <div className="front-end-card-body">
+                    {frontEndText}
+                </div>
+            </div>
+        );
+    };
+
+    const renderStreamDetail = (entry) => {
+        const prettyJson = JSON.stringify(entry.data, null, 2);
+
+        return (
+            <div className="details-card">
+                <div className="details-card-header">
+                    <span className="details-card-timestamp">{entry.timestamp}  -  </span>
+                    <span className="details-card-timestamp">{entry.event}</span>
+                </div>
+                <pre className="details-card-json">{prettyJson}</pre>
+            </div>
+        );
+    };
 
     return (
         <div className="agent-page">
@@ -271,7 +376,7 @@ const Agent = () => {
                     {/* Stream Panel */}
                     <section className={`agent-panel ${collapsedPanels.stream ? 'collapsed' : ''}`}>
                         <div className="agent-panel-header">
-                            <h3>Stream</h3>
+                            <h3>Result</h3>
                             <button className="panel-toggle-btn" onClick={() => handleTogglePanel('stream')}>
                                 {collapsedPanels.stream ? '▸' : '◂'}
                             </button>
@@ -279,15 +384,15 @@ const Agent = () => {
 
                         {!collapsedPanels.stream && (
                             <div className="agent-panel-body scrollable">
-                                <div className="stream-meta">Live JSON updates from the backend</div>
+                                <div className="stream-meta">Streamed results</div>
                                 <div className="stream-log">
-                                    {streamEvents.length === 0 ? (
-                                        <div className="stream-placeholder">No streamed events yet.</div>
+                                    {streamFrontEnd.length === 0 ? (
+                                        <div className="stream-placeholder">No result entries yet.</div>
                                     ) : (
-                                        streamEvents.map((entry) => (
-                                            <pre key={entry.id} className="stream-entry">
-                                                {renderStreamEntry(entry)}
-                                            </pre>
+                                        streamFrontEnd.map((entry) => (
+                                            <div key={entry.id} className="stream-entry front-end-entry">
+                                                {renderStreamFrontEnd(entry)}
+                                            </div>
                                         ))
                                     )}
                                 </div>
@@ -306,15 +411,15 @@ const Agent = () => {
 
                         {!collapsedPanels.details && (
                             <div className="agent-panel-body scrollable">
-                                <div className="stream-meta">Secondary view for streamed payloads</div>
+                                <div className="stream-meta">Streamed details</div>
                                 <div className="stream-log compact">
-                                    {streamEvents.length === 0 ? (
+                                    {streamDetails.length === 0 ? (
                                         <div className="stream-placeholder">Waiting for backend stream...</div>
                                     ) : (
-                                        streamEvents.slice().reverse().map((entry) => (
-                                            <pre key={entry.id} className="stream-entry compact-entry">
-                                                {renderStreamEntry(entry)}
-                                            </pre>
+                                        streamDetails.slice().reverse().map((entry) => (
+                                            <div key={entry.id} className="stream-entry detail-entry">
+                                                {renderStreamDetail(entry)}
+                                            </div>
                                         ))
                                     )}
                                 </div>
