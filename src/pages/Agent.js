@@ -112,6 +112,7 @@ const Agent = () => {
     const [streamFrontEnd, setStreamFrontEnd] = useState([]);
     const [streamDetails, setStreamDetails] = useState([]);
     const [collapsedPanels, setCollapsedPanels] = useState(initialPanels);
+    const [collapsedEntries, setCollapsedEntries] = useState({});
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -138,6 +139,13 @@ const Agent = () => {
         setCollapsedPanels((current) => ({
             ...current,
             [panelKey]: !current[panelKey]
+        }));
+    };
+
+    const handleToggleEntry = (entryId) => {
+        setCollapsedEntries((current) => ({
+            ...current,
+            [entryId]: !current[entryId]
         }));
     };
 
@@ -178,6 +186,7 @@ const Agent = () => {
         setStreamEvents([]);
         setStreamFrontEnd([]);
         setStreamDetails([]);
+        setCollapsedEntries({});
 
         try {
             const authHeader = getAuthHeader();
@@ -258,14 +267,21 @@ const Agent = () => {
 
     const renderStreamDetail = (entry) => {
         const prettyJson = JSON.stringify(entry.data, null, 2);
+        const isCollapsed = Boolean(collapsedEntries[entry.id]);
 
         return (
-            <div className="details-card">
+            <div
+                className={`details-card ${isCollapsed ? 'collapsed' : ''}`}
+                onClick={() => handleToggleEntry(entry.id)}
+                role="button"
+                tabIndex={0}
+                aria-expanded={!isCollapsed}
+            >
                 <div className="details-card-header">
                     <span className="details-card-timestamp">{entry.timestamp}  -  </span>
                     <span className="details-card-timestamp">{entry.event}</span>
                 </div>
-                <pre className="details-card-json">{prettyJson}</pre>
+                {!isCollapsed && <pre className="details-card-json">{prettyJson}</pre>}
             </div>
         );
     };

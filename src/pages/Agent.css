@@ -559,6 +559,15 @@
     background: rgba(15, 23, 42, 0.46);
     border: 1px solid rgba(255, 0, 0, 0.6);
     color: #e5e7eb;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.8s ease, border-color 0.8s ease;
+}
+
+.details-card:hover,
+.details-card:focus-visible {
+    background: rgba(15, 23, 42, 0.62);
+    border-color: rgba(255, 0, 0, 0.82);
 }
 
 .details-card-header {
