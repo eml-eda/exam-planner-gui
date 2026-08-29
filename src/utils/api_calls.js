@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl = "http://127.0.0.1:8000";   // for development
-// const baseUrl = "https://cas.polito.it/api/exams";  // for production
+// const baseUrl = "http://127.0.0.1:8000";   // for development
+const baseUrl = "https://cas.polito.it/api/exams";  // for production
 
 
 export const getExamsApi = async (courseCode) => {
