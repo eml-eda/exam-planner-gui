@@ -108,7 +108,6 @@ const Agent = () => {
     const [emailText, setEmailText] = useState('');
     const [isRunning, setIsRunning] = useState(false);
     const [error, setError] = useState(null);
-    const [streamEvents, setStreamEvents] = useState([]);
     const [streamFrontEnd, setStreamFrontEnd] = useState([]);
     const [streamDetails, setStreamDetails] = useState([]);
     const [collapsedPanels, setCollapsedPanels] = useState(initialPanels);
@@ -152,12 +151,6 @@ const Agent = () => {
     const appendStreamEvent = (entry) => {
         const { frontEndEntry, detailEntry } = splitStreamEntry(entry);
 
-        setStreamEvents((current) => [...current, {
-            id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-            timestamp: new Date().toISOString(),
-            ...entry
-        }]);
-
         if (frontEndEntry) {
             setStreamFrontEnd((current) => [...current, {
                 id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
@@ -183,7 +176,6 @@ const Agent = () => {
 
         setIsRunning(true);
         setError(null);
-        setStreamEvents([]);
         setStreamFrontEnd([]);
         setStreamDetails([]);
         setCollapsedEntries({});
