@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -251,7 +252,7 @@ const Agent = () => {
                     <span className="front-end-card-timestamp">{entry.timestamp}</span>
                 </div>
                 <div className="front-end-card-body">
-                    {frontEndText}
+                    <ReactMarkdown>{frontEndText}</ReactMarkdown>
                 </div>
             </div>
         );
