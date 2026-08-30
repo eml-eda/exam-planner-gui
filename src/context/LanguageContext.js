@@ -149,6 +149,26 @@ const translations = {
     english: { en: 'ENG', it: 'ENG' },
     italian: { en: 'IT', it: 'IT' },
 
+    // Agent page
+    agent_title: { en: 'AI Agent', it: 'Agente AI' },
+    agent_input: { en: 'Input', it: 'Input' },
+    agent_result: { en: 'Result', it: 'Risultato' },
+    agent_details: { en: 'Details', it: 'Dettagli' },
+    agent_email_text: { en: 'Email Text', it: 'Testo Email' },
+    paste_from_clipboard: { en: 'Paste from Clipboard', it: 'Incolla dagli Appunti' },
+    run_agent: { en: 'Run Agent', it: 'Esegui Agente' },
+    running: { en: 'Running...', it: 'In esecuzione...' },
+    phase: { en: 'Phase', it: 'Fase' },
+    streamed_results: { en: 'Streamed results', it: 'Risultati in streaming' },
+    no_result_entries: { en: 'No result entries yet.', it: 'Nessun risultato ancora.' },
+    streamed_details: { en: 'Streamed details', it: 'Dettagli in streaming' },
+    waiting_backend_stream: { en: 'Waiting for backend stream...', it: 'In attesa del flusso del backend...' },
+    agent_error_clipboard: { en: 'Unable to read the clipboard.', it: 'Impossibile leggere gli appunti.' },
+    agent_error_email_required: { en: 'Paste or type the email text before running the agent.', it: 'Incolla o digita il testo dell\'email prima di eseguire l\'agente.' },
+    agent_error_empty_response: { en: 'Streaming response body is empty.', it: 'Il corpo della risposta in streaming è vuoto.' },
+    agent_error_request_failed: { en: 'Agent request failed', it: 'Richiesta dell\'agente fallita' },
+    agent_error_failed_run: { en: 'Failed to run the agent.', it: 'Impossibile eseguire l\'agente.' },
+
     // Error messages
     error: { en: 'Error', it: 'Errore' },
     close: { en: 'Close', it: 'Chiudi' },

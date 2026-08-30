@@ -126,7 +126,7 @@ const Agent = () => {
             const clipboardText = await navigator.clipboard.readText();
             setEmailText(clipboardText);
         } catch (clipboardError) {
-            setError('Unable to read the clipboard.');
+            setError(t('agent_error_clipboard'));
         }
     };
 
@@ -170,7 +170,7 @@ const Agent = () => {
 
     const handleRunAgent = async () => {
         if (!emailText.trim()) {
-            setError('Paste or type the email text before running the agent.');
+            setError(t('agent_error_email_required'));
             return;
         }
 
@@ -190,11 +190,11 @@ const Agent = () => {
 
             if (!response.ok) {
                 const responseText = await response.text();
-                throw new Error(responseText || `Agent request failed with status ${response.status}`);
+                throw new Error(responseText || `${t('agent_error_request_failed')} (${response.status})`);
             }
 
             if (!response.body) {
-                throw new Error('Streaming response body is empty.');
+                throw new Error(t('agent_error_empty_response'));
             }
 
             const reader = response.body.getReader();
@@ -232,7 +232,7 @@ const Agent = () => {
                 appendStreamEvent(entry);
             }
         } catch (runError) {
-            setError(runError?.message || 'Failed to run the agent.');
+            setError(runError?.message || t('agent_error_failed_run'));
         } finally {
             setIsRunning(false);
         }
@@ -289,7 +289,7 @@ const Agent = () => {
                 </div>
 
                 <div className="nav-middle">
-                    <h2 className="page-title">AI Agent</h2>
+                    <h2 className="page-title">{t('agent_title')}</h2>
                 </div>
 
                 <div className="nav-right">
@@ -324,7 +324,7 @@ const Agent = () => {
                     {/* Input Panel */}
                     <section className={`agent-panel ${collapsedPanels.input ? 'collapsed' : ''}`}>
                         <div className="agent-panel-header">
-                            <h3>Input</h3>
+                            <h3>{t('agent_input')}</h3>
                             <button className="panel-toggle-btn" onClick={() => handleTogglePanel('input')}>
                                 {collapsedPanels.input ? '▸' : '◂'}
                             </button>
@@ -340,13 +340,13 @@ const Agent = () => {
                                                 checked={selectedPhase === phase}
                                                 onChange={() => handlePhaseChange(phase)}
                                             />
-                                            <span>Phase {phase}</span>
+                                            <span>{t('phase')} {phase}</span>
                                         </label>
                                     ))}
                                 </div>
 
                                 <label className="text-area-label" htmlFor="agent-email-text">
-                                    Email Text
+                                    {t('agent_email_text')}
                                 </label>
                                 <div className="agent-textarea-shell">
                                     <textarea
@@ -362,7 +362,7 @@ const Agent = () => {
                                         className="agent-action-btn secondary paste-btn"
                                         onClick={handlePasteFromClipboard}
                                     >
-                                        Paste from Clipboard
+                                        {t('paste_from_clipboard')}
                                     </button>
                                 </div>
 
@@ -372,7 +372,7 @@ const Agent = () => {
                                         onClick={handleRunAgent}
                                         disabled={isRunning}
                                     >
-                                        {isRunning ? 'Running...' : 'Run Agent'}
+                                        {isRunning ? t('running') : t('run_agent')}
                                     </button>
                                 </div>
 
@@ -384,7 +384,7 @@ const Agent = () => {
                     {/* Stream Panel */}
                     <section className={`agent-panel ${collapsedPanels.stream ? 'collapsed' : ''}`}>
                         <div className="agent-panel-header">
-                            <h3>Result</h3>
+                            <h3>{t('agent_result')}</h3>
                             <button className="panel-toggle-btn" onClick={() => handleTogglePanel('stream')}>
                                 {collapsedPanels.stream ? '▸' : '◂'}
                             </button>
@@ -392,10 +392,10 @@ const Agent = () => {
 
                         {!collapsedPanels.stream && (
                             <div className="agent-panel-body scrollable">
-                                <div className="stream-meta">Streamed results</div>
+                                <div className="stream-meta">{t('streamed_results')}</div>
                                 <div className="stream-log">
                                     {streamFrontEnd.length === 0 ? (
-                                        <div className="stream-placeholder">No result entries yet.</div>
+                                        <div className="stream-placeholder">{t('no_result_entries')}</div>
                                     ) : (
                                         streamFrontEnd.map((entry) => (
                                             <div key={entry.id} className="stream-entry front-end-entry">
@@ -411,7 +411,7 @@ const Agent = () => {
                     {/* Details Panel */}
                     <section className={`agent-panel ${collapsedPanels.details ? 'collapsed' : ''}`}>
                         <div className="agent-panel-header">
-                            <h3>Details</h3>
+                            <h3>{t('agent_details')}</h3>
                             <button className="panel-toggle-btn" onClick={() => handleTogglePanel('details')}>
                                 {collapsedPanels.details ? '▸' : '◂'}
                             </button>
@@ -419,10 +419,10 @@ const Agent = () => {
 
                         {!collapsedPanels.details && (
                             <div className="agent-panel-body scrollable">
-                                <div className="stream-meta">Streamed details</div>
+                                <div className="stream-meta">{t('streamed_details')}</div>
                                 <div className="stream-log compact">
                                     {streamDetails.length === 0 ? (
-                                        <div className="stream-placeholder">Waiting for backend stream...</div>
+                                        <div className="stream-placeholder">{t('waiting_backend_stream')}</div>
                                     ) : (
                                         streamDetails.slice().reverse().map((entry) => (
                                             <div key={entry.id} className="stream-entry detail-entry">
