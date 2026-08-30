@@ -168,6 +168,9 @@ const translations = {
     agent_error_empty_response: { en: 'Streaming response body is empty.', it: 'Il corpo della risposta in streaming è vuoto.' },
     agent_error_request_failed: { en: 'Agent request failed', it: 'Richiesta dell\'agente fallita' },
     agent_error_failed_run: { en: 'Failed to run the agent.', it: 'Impossibile eseguire l\'agente.' },
+    click_to_copy: { en: 'Click to copy', it: 'Clicca per copiare' },
+    copied_to_clipboard: { en: 'Copied to clipboard', it: 'Copiato negli appunti' },
+    unable_to_copy_clipboard: { en: 'Unable to copy to clipboard.', it: 'Impossibile copiare negli appunti.' },
 
     // Error messages
     error: { en: 'Error', it: 'Errore' },

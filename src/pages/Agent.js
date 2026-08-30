@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -63,7 +63,10 @@ const splitStreamEntry = (entry) => {
         ? data[wrapperKey]
         : data;
 
-    if (!Object.prototype.hasOwnProperty.call(payload, 'front_end_result')) {
+    const hasFrontEndResult = Object.prototype.hasOwnProperty.call(payload, 'front_end_result');
+    const hasEasyCopy = Object.prototype.hasOwnProperty.call(payload, 'easy_copy');
+
+    if (!hasFrontEndResult && !hasEasyCopy) {
         return {
             frontEndEntry: null,
             detailEntry: {
@@ -75,6 +78,7 @@ const splitStreamEntry = (entry) => {
 
     const {
         front_end_result: frontEndResult,
+        easy_copy: easyCopy,
         ...detailData
     } = payload;
 
@@ -84,13 +88,18 @@ const splitStreamEntry = (entry) => {
         }
         : detailData;
 
-    return {
-        frontEndEntry: {
+    const frontEndEntry = hasFrontEndResult
+        ? {
             ...entry,
             data: {
                 front_end_result: frontEndResult
-            }
-        },
+            },
+            easy_copy: easyCopy
+        }
+        : null;
+
+    return {
+        frontEndEntry,
         detailEntry: Object.keys(detailData).length > 0
             ? {
                 ...entry,
@@ -113,6 +122,19 @@ const Agent = () => {
     const [streamDetails, setStreamDetails] = useState([]);
     const [collapsedPanels, setCollapsedPanels] = useState(initialPanels);
     const [collapsedEntries, setCollapsedEntries] = useState({});
+    const [copyToast, setCopyToast] = useState('');
+
+    useEffect(() => {
+        if (!copyToast) {
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setCopyToast('');
+        }, 2000);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [copyToast]);
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -239,6 +261,18 @@ const Agent = () => {
         }
     };
 
+    const copyTextToClipboard = async (text) => {
+        const value = typeof text === 'string' ? text : String(text ?? '');
+
+        try {
+            await navigator.clipboard.writeText(value);
+            setError(null);
+            setCopyToast(t('copied_to_clipboard'));
+        } catch (clipboardError) {
+            setError(t('unable_to_copy_clipboard'));
+        }
+    };
+
     const renderStreamFrontEnd = (entry) => {
         let frontEndText = String(entry?.data?.front_end_result ?? '');
         const isImportant = frontEndText.startsWith("!important");
@@ -246,10 +280,28 @@ const Agent = () => {
             frontEndText = frontEndText.slice("!important".length);
         }
 
+        const easyCopyText = entry?.easy_copy ?? entry?.data?.easy_copy ?? null;
+        const hasEasyCopy = easyCopyText !== null && easyCopyText !== undefined && String(easyCopyText).trim() !== '';
+        const cardProps = hasEasyCopy ? {
+            onClick: () => copyTextToClipboard(easyCopyText),
+            onKeyDown: (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    copyTextToClipboard(easyCopyText);
+                }
+            },
+            role: 'button',
+            tabIndex: 0,
+            className: `front-end-card clickable ${isImportant ? 'important' : ''}`
+        } : {
+            className: `front-end-card ${isImportant ? 'important' : ''}`
+        };
+
         return (
-            <div className={`front-end-card ${isImportant ? 'important' : ''}`}>
+            <div {...cardProps}>
                 <div className="front-end-card-header">
                     <span className="front-end-card-timestamp">{entry.timestamp}</span>
+                    {hasEasyCopy && <span className="front-end-card-copy-hint">{t('click_to_copy')}</span>}
                 </div>
                 <div className="front-end-card-body">
                     <ReactMarkdown>{frontEndText}</ReactMarkdown>
@@ -439,6 +491,7 @@ const Agent = () => {
             </div>
 
             {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+            {copyToast && <div className="copy-toast">{copyToast}</div>}
         </div>
     );
 };
