@@ -387,8 +387,6 @@
 
 .agent-textarea-shell {
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
 .agent-textarea {
@@ -404,8 +402,6 @@
     line-height: 1.6;
     outline: none;
     box-sizing: border-box;
-    padding-right: 180px;
-    padding-bottom: 66px;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-silver) transparent;
 }
@@ -699,8 +695,7 @@
     }
 
     .agent-textarea {
-        padding-right: 16px;
-        padding-bottom: 64px;
+        padding: 14px 16px;
     }
 
     .paste-btn {
