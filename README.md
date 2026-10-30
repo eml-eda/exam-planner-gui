@@ -20,8 +20,8 @@ The application provides a bilingual (English/Italian) interface backed by a rem
 ## Screenshots
 
 ![Application Calendar](docs/screenshots/1.png)
-![Application Home Page](doscs/screenshots/2.png)
-![Detailed Calendar](doscs/screenshots/3.png)
+![Application Home Page](docs/screenshots/2.png)
+![Detailed Calendar](docs/screenshots/3.png)
 ![Export Functionality](docs/screenshots/4.png)
 
 ## Routes
